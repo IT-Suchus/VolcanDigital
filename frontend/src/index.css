@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-volcan-cream text-volcan-stone font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-volcan-night;
+  }
+}
+
+@layer components {
+  /* You can add custom component classes here if needed, 
+     though tailwind utility classes are preferred */
+}
+
+@layer utilities {
+  .btn-gradient-whatsapp {
+    background: linear-gradient(135deg, #D3A784 0%, #B2845E 100%) !important;
+  }
+
+  .btn-glow-whatsapp {
+    box-shadow: 0 0 24px rgba(211, 167, 132, 0.45);
+    animation: whatsapp-glow 3s infinite ease-in-out;
+  }
+}
+
+@keyframes whatsapp-glow {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(211, 167, 132, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(211, 167, 132, 0.6);
+  }
+}
+
