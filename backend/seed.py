@@ -1,7 +1,8 @@
 import os
 from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
-from app.models import Cliente, Plan, Integrante
+from app.models import Cliente, Plan, Integrante, Usuario
+from app.auth import hash_password
 
 def seed_data(db: Session):
     # 1. Seed Planes
@@ -119,6 +120,24 @@ def seed_data(db: Session):
         db.add_all(equipo)
         db.commit()
         print("Equipo insertado.")
+
+    # 4. Seed Usuarios
+    if not db.query(Usuario).first():
+        usuarios = [
+            Usuario(
+                email="admin@volcandigital.com.ar",
+                hashed_password=hash_password("volcan2026"),
+                rol="administrador"
+            ),
+            Usuario(
+                email="developer@volcandigital.com.ar",
+                hashed_password=hash_password("volcan2026"),
+                rol="desarrollador"
+            )
+        ]
+        db.add_all(usuarios)
+        db.commit()
+        print("Usuarios insertados.")
 
 if __name__ == "__main__":
     db = SessionLocal()

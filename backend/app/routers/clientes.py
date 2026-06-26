@@ -5,6 +5,7 @@ from typing import List
 from app.database import get_db
 from app.models import Cliente
 from app.schemas import ClienteResponse, ClienteCreate, ClienteUpdate
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 
@@ -14,12 +15,12 @@ def get_clientes(db: Session = Depends(get_db)):
     return clientes
 
 @router.get("/admin", response_model=List[ClienteResponse])
-def get_clientes_admin(db: Session = Depends(get_db)):
+def get_clientes_admin(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     # Returns all clients including inactive ones for management
     return db.query(Cliente).order_by(Cliente.orden).all()
 
 @router.post("/", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED)
-def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
+def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_cliente = Cliente(**cliente.model_dump())
     db.add(db_cliente)
     db.commit()
@@ -27,7 +28,7 @@ def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     return db_cliente
 
 @router.put("/{cliente_id}", response_model=ClienteResponse)
-def update_cliente(cliente_id: int, cliente_update: ClienteUpdate, db: Session = Depends(get_db)):
+def update_cliente(cliente_id: int, cliente_update: ClienteUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
@@ -41,7 +42,7 @@ def update_cliente(cliente_id: int, cliente_update: ClienteUpdate, db: Session =
     return db_cliente
 
 @router.delete("/{cliente_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_cliente(cliente_id: int, db: Session = Depends(get_db)):
+def delete_cliente(cliente_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
@@ -51,7 +52,7 @@ def delete_cliente(cliente_id: int, db: Session = Depends(get_db)):
     return None
 
 @router.put("/{cliente_id}/imagen")
-async def upload_cliente_imagen(cliente_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_cliente_imagen(cliente_id: int, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     content_type = file.content_type
     
     # Fallback robusto al nombre del archivo para detectar el tipo mime si es genérico

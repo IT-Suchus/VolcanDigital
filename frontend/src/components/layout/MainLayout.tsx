@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed w-full z-50 bg-volcan-night/95 backdrop-blur-sm border-b border-volcan-stone">
+    <header className="fixed w-full z-50 bg-volcan-night/95 backdrop-blur-sm border-b border-volcan-taupe/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center">
@@ -33,7 +33,7 @@ const Header = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className="text-volcan-sand hover:text-volcan-ember transition-colors text-sm font-medium"
+                className="text-volcan-cream hover:text-volcan-ember transition-colors text-sm font-medium"
               >
                 {link.name}
               </Link>
@@ -50,7 +50,7 @@ const Header = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="text-volcan-sand hover:text-white focus:outline-none"
+              className="text-volcan-cream hover:text-white focus:outline-none"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -60,14 +60,14 @@ const Header = () => {
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden bg-volcan-night border-b border-volcan-stone">
+        <div className="md:hidden bg-volcan-night border-b border-volcan-taupe/20">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 rounded-md text-base font-medium text-volcan-sand hover:text-volcan-ember hover:bg-volcan-stone/30"
+                className="block px-3 py-2 rounded-md text-base font-medium text-volcan-cream hover:text-volcan-ember hover:bg-volcan-taupe/20"
               >
                 {link.name}
               </Link>
@@ -88,7 +88,7 @@ const Header = () => {
 
 const Footer = () => {
   return (
-    <footer className="bg-volcan-night text-volcan-sand border-t border-volcan-stone pt-16 pb-8">
+    <footer className="bg-volcan-night text-volcan-cream border-t border-volcan-taupe/20 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
@@ -98,14 +98,14 @@ const Footer = () => {
               </svg>
               Volcán Digital
             </Link>
-            <p className="text-volcan-sand/70 text-sm">
+            <p className="text-volcan-cream/70 text-sm">
               Agencia de marketing digital especializada en performance y resultados medibles. Menos humo, más ventas.
             </p>
           </div>
           
           <div>
             <h4 className="text-lg font-serif font-semibold mb-6 text-white">Navegación</h4>
-            <ul className="space-y-3 text-sm text-volcan-sand/80">
+            <ul className="space-y-3 text-sm text-volcan-cream/80">
               <li><Link to="/" className="hover:text-volcan-ember transition-colors">Inicio</Link></li>
               <li><Link to="/servicios" className="hover:text-volcan-ember transition-colors">Servicios</Link></li>
               <li><Link to="/clientes" className="hover:text-volcan-ember transition-colors">Casos de Éxito</Link></li>
@@ -115,7 +115,7 @@ const Footer = () => {
 
           <div className="col-span-1 md:col-span-2">
             <h4 className="text-lg font-serif font-semibold mb-6 text-white">Contacto</h4>
-            <ul className="space-y-4 text-sm text-volcan-sand/80">
+            <ul className="space-y-4 text-sm text-volcan-cream/80">
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-volcan-ember" />
                 <a href="https://wa.me/5492216743529" target="_blank" rel="noreferrer" className="hover:text-volcan-ember transition-colors">
@@ -142,7 +142,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-volcan-stone/50 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-volcan-sand/50">
+        <div className="border-t border-volcan-taupe/20 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-volcan-cream/50">
           <p>&copy; {new Date().getFullYear()} Volcán Digital. Todos los derechos reservados.</p>
         </div>
       </div>
@@ -152,7 +152,7 @@ const Footer = () => {
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-volcan-cream text-volcan-stone">
+    <div className="min-h-screen flex flex-col font-sans bg-volcan-cream text-volcan-night">
       <Header />
       <main className="flex-grow pt-20">
         <Outlet />

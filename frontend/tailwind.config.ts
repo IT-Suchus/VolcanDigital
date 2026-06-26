@@ -9,19 +9,17 @@ export default {
     extend: {
       colors: {
         'volcan-night': '#231F20',
+        'volcan-clay': '#684036',
         'volcan-ember': '#D3A784',
-        'volcan-magma': '#B2845E',
-        'volcan-clay': '#8C5A3C',
-        'volcan-sand': '#EFE6D8',
-        'volcan-stone': '#3A332E',
-        'volcan-cream': '#FBF7F0',
+        'volcan-taupe': '#9E8B7D',
+        'volcan-cream': '#F7F3F0',
       },
       fontFamily: {
-        serif: ['Fraunces', 'serif'],
-        sans: ['Inter', 'sans-serif'],
+        serif: ['Poppins', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       backgroundImage: {
-        'gradient-brand': 'linear-gradient(135deg, #231F20 0%, #B2845E 60%, #D3A784 100%)',
+        'gradient-brand': 'linear-gradient(135deg, #231F20 0%, #684036 55%, #D3A784 100%)',
       }
     },
   },

@@ -9,11 +9,12 @@ import {
   fetchResumenMetricas, fetchLeadsPorMes, fetchLeadsPorEstado, fetchLeadsPorPlan,
   fetchMetricasTecnicasResumen, fetchMetricasTecnicasTiempoRespuesta, fetchMetricasTecnicasRequestsPorEndpoint,
   ResumenMetricas, LeadsPorMes, LeadsPorEstado, LeadsPorPlan,
-  MetricasTecnicasResumen, MetricasTecnicasTiempoRespuesta, MetricasTecnicasRequestsPorEndpoint
+  MetricasTecnicasResumen, MetricasTecnicasTiempoRespuesta, MetricasTecnicasRequestsPorEndpoint,
+  loginUser
 } from '../lib/api';
 import { 
   Lock, LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
-  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3
+  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, User
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -25,8 +26,11 @@ export default function Admin() {
   const location = useLocation();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState('');
+  const [loggedInRole, setLoggedInRole] = useState('');
   const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'equipo' | 'metricas'>('leads');
 
   // Leads state
@@ -144,6 +148,8 @@ export default function Admin() {
     const authStatus = localStorage.getItem('volcan_admin_auth');
     if (authStatus === 'true') {
       setIsAuthenticated(true);
+      setLoggedInUser(localStorage.getItem('volcan_auth_user') || 'admin');
+      setLoggedInRole(localStorage.getItem('volcan_auth_role') || 'administrador');
     }
   }, []);
 
@@ -225,21 +231,35 @@ export default function Admin() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'volcan2026') {
+    try {
+      setLoginError('');
+      const data = await loginUser(emailInput, password);
+      localStorage.setItem('volcan_auth_token', data.token);
+      localStorage.setItem('volcan_auth_user', data.email);
+      localStorage.setItem('volcan_auth_role', data.rol);
       localStorage.setItem('volcan_admin_auth', 'true');
+      
+      setLoggedInUser(data.email);
+      setLoggedInRole(data.rol);
       setIsAuthenticated(true);
       setLoginError('');
-    } else {
-      setLoginError('Contraseña incorrecta');
+    } catch (err: any) {
+      console.error(err);
+      const errorMsg = err.response?.data?.detail || 'Email o contraseña incorrectos';
+      setLoginError(errorMsg);
     }
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('volcan_auth_token');
+    localStorage.removeItem('volcan_auth_user');
+    localStorage.removeItem('volcan_auth_role');
     localStorage.removeItem('volcan_admin_auth');
     setIsAuthenticated(false);
     setPassword('');
+    setEmailInput('');
   };
 
   // Leads handlers
@@ -507,7 +527,7 @@ export default function Admin() {
       <div className="min-h-screen bg-volcan-night flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-volcan-ember rounded-full mix-blend-screen filter blur-[120px] opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-volcan-magma rounded-full mix-blend-screen filter blur-[120px] opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-volcan-clay rounded-full mix-blend-screen filter blur-[120px] opacity-10 animate-pulse"></div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
           <div className="flex justify-center text-volcan-ember">
@@ -518,20 +538,39 @@ export default function Admin() {
           <h2 className="mt-6 text-center text-3xl font-serif font-black text-white tracking-tight">
             Volcán Digital
           </h2>
-          <p className="mt-2 text-center text-sm text-volcan-sand/70">
+          <p className="mt-2 text-center text-sm text-volcan-cream/70">
             Panel de Administración
           </p>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-          <div className="bg-volcan-stone/30 backdrop-blur-md py-8 px-4 border border-volcan-stone/50 shadow-2xl rounded-2xl sm:px-10">
+          <div className="bg-volcan-taupe/15 backdrop-blur-md py-8 px-4 border border-volcan-taupe/30 shadow-2xl rounded-2xl sm:px-10">
             <form className="space-y-6" onSubmit={handleLogin}>
               <div>
-                <label className="block text-sm font-medium text-volcan-sand">
-                  Contraseña de acceso
+                <label className="block text-sm font-medium text-volcan-cream">
+                  Email de acceso
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-volcan-sand/40">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-volcan-taupe/40">
+                    <User size={18} />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-volcan-taupe/20 bg-volcan-night text-white placeholder-volcan-taupe/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-volcan-ember focus:border-volcan-ember text-sm"
+                    placeholder="ejemplo@volcandigital.com.ar"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-volcan-cream">
+                  Contraseña
+                </label>
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-volcan-taupe/40">
                     <Lock size={18} />
                   </div>
                   <input
@@ -539,7 +578,7 @@ export default function Admin() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-volcan-stone bg-volcan-night text-white placeholder-volcan-sand/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-volcan-ember focus:border-volcan-ember text-sm"
+                    className="block w-full pl-10 pr-3 py-3 border border-volcan-taupe/20 bg-volcan-night text-white placeholder-volcan-taupe/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-volcan-ember focus:border-volcan-ember text-sm"
                     placeholder="••••••••"
                   />
                 </div>
@@ -570,9 +609,9 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-volcan-cream flex flex-col font-sans text-volcan-stone">
+    <div className="min-h-screen bg-volcan-cream flex flex-col font-sans text-volcan-night">
       {/* Admin Navbar */}
-      <nav className="bg-volcan-night text-white border-b border-volcan-stone px-6 py-4 flex justify-between items-center shadow-md">
+      <nav className="bg-volcan-night text-white border-b border-volcan-taupe/20 px-6 py-4 flex justify-between items-center shadow-md">
         <div className="flex items-center gap-3">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-volcan-ember">
             <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
@@ -582,7 +621,7 @@ export default function Admin() {
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 bg-volcan-stone/80 text-volcan-sand hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-volcan-stone hover:bg-volcan-stone transition-all"
+          className="flex items-center gap-2 bg-volcan-taupe/80 text-volcan-cream hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-volcan-taupe/20 hover:bg-volcan-taupe/20 transition-all"
         >
           <LogOut size={16} />
           Salir
@@ -591,13 +630,13 @@ export default function Admin() {
 
       <div className="flex flex-col lg:flex-row flex-grow">
         {/* Sidebar tabs */}
-        <aside className="w-full lg:w-64 bg-volcan-night border-b lg:border-b-0 lg:border-r border-volcan-stone py-6 flex flex-col gap-2 shrink-0">
+        <aside className="w-full lg:w-64 bg-volcan-night border-b lg:border-b-0 lg:border-r border-volcan-taupe/20 py-6 flex flex-col gap-2 shrink-0">
           <button
             onClick={() => handleTabChange('leads')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'leads' 
-                ? 'text-volcan-ember bg-volcan-stone/40 border-l-4 border-volcan-ember' 
-                : 'text-volcan-sand/70 hover:text-white hover:bg-volcan-stone/20 border-l-4 border-transparent'
+                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
+                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
             }`}
           >
             <FileText size={20} />
@@ -607,8 +646,8 @@ export default function Admin() {
             onClick={() => handleTabChange('clientes')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'clientes' 
-                ? 'text-volcan-ember bg-volcan-stone/40 border-l-4 border-volcan-ember' 
-                : 'text-volcan-sand/70 hover:text-white hover:bg-volcan-stone/20 border-l-4 border-transparent'
+                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
+                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
             }`}
           >
             <Briefcase size={20} />
@@ -618,8 +657,8 @@ export default function Admin() {
             onClick={() => handleTabChange('planes')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'planes' 
-                ? 'text-volcan-ember bg-volcan-stone/40 border-l-4 border-volcan-ember' 
-                : 'text-volcan-sand/70 hover:text-white hover:bg-volcan-stone/20 border-l-4 border-transparent'
+                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
+                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
             }`}
           >
             <FileText size={20} />
@@ -629,8 +668,8 @@ export default function Admin() {
             onClick={() => handleTabChange('equipo')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'equipo' 
-                ? 'text-volcan-ember bg-volcan-stone/40 border-l-4 border-volcan-ember' 
-                : 'text-volcan-sand/70 hover:text-white hover:bg-volcan-stone/20 border-l-4 border-transparent'
+                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
+                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
             }`}
           >
             <Users size={20} />
@@ -640,16 +679,18 @@ export default function Admin() {
             onClick={() => handleTabChange('metricas')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'metricas' 
-                ? 'text-volcan-ember bg-volcan-stone/40 border-l-4 border-volcan-ember' 
-                : 'text-volcan-sand/70 hover:text-white hover:bg-volcan-stone/20 border-l-4 border-transparent'
+                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
+                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
             }`}
           >
             <BarChart3 size={20} />
             <span>Métricas</span>
           </button>
 
-          <div className="mt-auto px-6 py-4 text-xs text-volcan-sand/40 border-t border-volcan-stone/30 hidden lg:block">
-            Conectado a la base de datos de producción.
+          <div className="mt-auto px-6 py-4 text-xs text-volcan-taupe/40 border-t border-volcan-taupe/20 hidden lg:block space-y-1">
+            <div>Email: <span className="text-volcan-ember font-semibold">{loggedInUser}</span></div>
+            <div>Rol: <span className="text-volcan-cream/85 capitalize font-medium">{loggedInRole}</span></div>
+            <div className="pt-1 text-[10px] text-volcan-taupe/30">Conectado a base de datos.</div>
           </div>
         </aside>
 
@@ -674,7 +715,7 @@ export default function Admin() {
             </h1>
             <button 
               onClick={loadData}
-              className="p-2.5 rounded-xl border border-volcan-sand bg-white hover:bg-volcan-cream transition-colors text-volcan-stone flex items-center justify-center shadow-sm"
+              className="p-2.5 rounded-xl border border-volcan-taupe/20 bg-white hover:bg-volcan-cream transition-colors text-volcan-night flex items-center justify-center shadow-sm"
               title="Recargar datos"
             >
               <RefreshCw size={18} />
@@ -683,40 +724,40 @@ export default function Admin() {
 
           {/* -------------------- TAB: LEADS -------------------- */}
           {activeTab === 'leads' && (
-            <div className="bg-white rounded-2xl border border-volcan-sand shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm overflow-hidden">
               {loadingLeads ? (
-                <div className="py-20 text-center text-volcan-stone/60">Cargando leads...</div>
+                <div className="py-20 text-center text-volcan-taupe">Cargando leads...</div>
               ) : leads.length === 0 ? (
-                <div className="py-20 text-center text-volcan-stone/60">No se encontraron leads registrados.</div>
+                <div className="py-20 text-center text-volcan-taupe">No se encontraron leads registrados.</div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-volcan-sand">
+                  <table className="min-w-full divide-y divide-volcan-taupe/20">
                     <thead className="bg-volcan-cream">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Nombre</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Contacto</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Negocio</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Interés</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Fecha</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Estado</th>
-                        <th className="px-6 py-4 text-center text-xs font-bold text-volcan-stone/60 uppercase tracking-wider">Acciones</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Nombre</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Contacto</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Negocio</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Interés</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Fecha</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Estado</th>
+                        <th className="px-6 py-4 text-center text-xs font-bold text-volcan-taupe uppercase tracking-wider">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-volcan-sand bg-white text-sm">
+                    <tbody className="divide-y divide-volcan-taupe/20 bg-white text-sm">
                       {leads.map((l) => (
                         <tr key={l.id} className="hover:bg-volcan-cream/30">
                           <td className="px-6 py-4 whitespace-nowrap font-semibold text-volcan-night">{l.nombre}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-volcan-stone/80">
+                          <td className="px-6 py-4 whitespace-nowrap text-volcan-night/85">
                             <div>{l.email}</div>
-                            {l.telefono && <div className="text-xs text-volcan-stone/50">{l.telefono}</div>}
+                            {l.telefono && <div className="text-xs text-volcan-taupe">{l.telefono}</div>}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-volcan-stone/85">{l.negocio || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-volcan-night/85">{l.negocio || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-xs">
-                            <span className="bg-volcan-sand text-volcan-stone px-2 py-1 rounded-md font-medium">
+                            <span className="bg-volcan-taupe/15 text-volcan-night px-2 py-1 rounded-md font-medium">
                               {l.plan_interes || 'General'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs text-volcan-stone/60">
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-volcan-taupe">
                             {new Date(l.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -732,7 +773,7 @@ export default function Admin() {
                           <td className="px-6 py-4 whitespace-nowrap text-center text-xs space-x-2">
                             <button
                               onClick={() => setViewingLead(l)}
-                              className="text-volcan-stone hover:text-volcan-night p-1 rounded hover:bg-volcan-sand/40 inline-flex items-center justify-center"
+                              className="text-volcan-night hover:text-volcan-night p-1 rounded hover:bg-volcan-taupe/15 inline-flex items-center justify-center"
                               title="Ver detalles"
                             >
                               <Eye size={16} />
@@ -740,7 +781,7 @@ export default function Admin() {
                             <select
                               value={l.estado}
                               onChange={(e) => handleStatusChange(l.id, e.target.value)}
-                              className="text-xs border border-volcan-sand rounded bg-white p-1 focus:ring-volcan-ember focus:outline-none"
+                              className="text-xs border border-volcan-taupe/20 rounded bg-white p-1 focus:ring-volcan-ember focus:outline-none"
                             >
                               <option value="nuevo">Nuevo</option>
                               <option value="en_proceso">En Proceso</option>
@@ -771,15 +812,15 @@ export default function Admin() {
               </div>
 
               {loadingClientes ? (
-                <div className="py-20 text-center text-volcan-stone/60">Cargando clientes...</div>
+                <div className="py-20 text-center text-volcan-taupe">Cargando clientes...</div>
               ) : clientes.length === 0 ? (
-                <div className="py-20 text-center text-volcan-stone/60 bg-white rounded-2xl border border-volcan-sand">No hay clientes cargados.</div>
+                <div className="py-20 text-center text-volcan-taupe bg-white rounded-2xl border border-volcan-taupe/20">No hay clientes cargados.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {clientes.map((c) => (
                     <div 
                       key={c.id} 
-                      className={`bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative ${!c.activo && 'opacity-60 bg-gray-50'}`}
+                      className={`bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative ${!c.activo && 'opacity-60 bg-gray-50'}`}
                       style={{ borderTop: `4px solid ${c.color_primario || '#D3A784'}` }}
                     >
                       {!c.activo && (
@@ -787,7 +828,7 @@ export default function Admin() {
                       )}
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-volcan-stone/50 font-bold">Orden: {c.orden}</span>
+                          <span className="text-xs text-volcan-taupe font-bold">Orden: {c.orden}</span>
                           <span 
                             className="text-xs font-semibold bg-volcan-ember/10 px-2 py-0.5 rounded-md"
                             style={{ color: c.color_primario || '#D3A784', backgroundColor: `${c.color_primario || '#D3A784'}1A` }}
@@ -798,7 +839,7 @@ export default function Admin() {
                         <h3 className="font-serif font-bold text-xl text-volcan-night mb-2">{c.nombre}</h3>
                         
                         <div className="my-3 flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-volcan-cream border border-volcan-sand flex items-center justify-center overflow-hidden shrink-0">
+                          <div className="w-12 h-12 rounded-lg bg-volcan-cream border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
                             {c.tiene_imagen ? (
                               <img 
                                 src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clientes/${c.id}/imagen`} 
@@ -806,12 +847,12 @@ export default function Admin() {
                                 className="w-full h-full object-contain p-1"
                               />
                             ) : (
-                              <span className="text-volcan-stone/30 font-serif font-bold text-lg">{c.nombre.charAt(0)}</span>
+                              <span className="text-volcan-taupe/40 font-serif font-bold text-lg">{c.nombre.charAt(0)}</span>
                             )}
                           </div>
                           <div>
-                            <span className="text-xs text-volcan-stone/60 font-semibold block">Logo del Cliente</span>
-                            <span className="text-[10px] text-volcan-stone/40">
+                            <span className="text-xs text-volcan-taupe font-semibold block">Logo del Cliente</span>
+                            <span className="text-[10px] text-volcan-taupe/70">
                               {c.tiene_imagen ? 'Almacenado en BD' : 'Sin imagen cargada'}
                             </span>
                           </div>
@@ -824,13 +865,13 @@ export default function Admin() {
                         )}
 
                         {c.testimonio && (
-                          <p className="mt-3 text-sm italic text-volcan-stone/75 line-clamp-3">
+                          <p className="mt-3 text-sm italic text-volcan-night/80 line-clamp-3">
                             "{c.testimonio}"
                           </p>
                         )}
                       </div>
 
-                      <div className="mt-6 pt-4 border-t border-volcan-sand flex justify-between items-center bg-white">
+                      <div className="mt-6 pt-4 border-t border-volcan-taupe/20 flex justify-between items-center bg-white">
                         {c.sitio_url ? (
                           <a 
                             href={c.sitio_url} 
@@ -841,12 +882,12 @@ export default function Admin() {
                           >
                             Web <ExternalLink size={12} />
                           </a>
-                        ) : <span className="text-xs text-volcan-stone/40">Sin web</span>}
+                        ) : <span className="text-xs text-volcan-taupe/70">Sin web</span>}
 
                         <div className="flex gap-2">
                           <button
                             onClick={() => openEditCliente(c)}
-                            className="p-2 border border-volcan-sand rounded-xl bg-white hover:bg-volcan-cream text-volcan-stone hover:text-volcan-night transition-colors"
+                            className="p-2 border border-volcan-taupe/20 rounded-xl bg-white hover:bg-volcan-cream text-volcan-night hover:text-volcan-night transition-colors"
                             title="Editar"
                           >
                             <Edit size={14} />
@@ -881,63 +922,63 @@ export default function Admin() {
               </div>
 
               {loadingPlanes ? (
-                <div className="py-20 text-center text-volcan-stone/60">Cargando planes...</div>
+                <div className="py-20 text-center text-volcan-taupe">Cargando planes...</div>
               ) : planes.length === 0 ? (
-                <div className="py-20 text-center text-volcan-stone/60 bg-white rounded-2xl border border-volcan-sand">No hay planes cargados.</div>
+                <div className="py-20 text-center text-volcan-taupe bg-white rounded-2xl border border-volcan-taupe/20">No hay planes cargados.</div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {planes.map((p) => (
-                    <div key={p.id} className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                    <div key={p.id} className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-volcan-stone/50 font-bold">Orden: {p.orden}</span>
+                          <span className="text-xs text-volcan-taupe font-bold">Orden: {p.orden}</span>
                           <span className="text-xs text-volcan-ember font-bold bg-volcan-ember/15 px-2 py-0.5 rounded-md">ID: {p.id}</span>
                         </div>
                         <h3 className="font-serif font-bold text-2xl text-volcan-night mb-2">{p.nombre}</h3>
                         
                         <div className="flex gap-4 my-3 bg-volcan-cream p-3 rounded-xl text-xs">
                           <div>
-                            <span className="block font-semibold text-volcan-stone/60">Regular:</span>
+                            <span className="block font-semibold text-volcan-taupe">Regular:</span>
                             <span className="font-bold text-sm text-volcan-night">{p.precio_regular ? `$${p.precio_regular.toLocaleString()}` : '-'}</span>
                           </div>
                           <div>
-                            <span className="block font-semibold text-volcan-stone/60">Promo:</span>
+                            <span className="block font-semibold text-volcan-taupe">Promo:</span>
                             <span className="font-bold text-sm text-volcan-ember">{p.precio_promo ? `$${p.precio_promo.toLocaleString()}` : '-'}</span>
                           </div>
                           {p.duracion_promo_meses ? (
                             <div>
-                              <span className="block font-semibold text-volcan-stone/60">Duración:</span>
+                              <span className="block font-semibold text-volcan-taupe">Duración:</span>
                               <span className="font-bold text-sm text-volcan-night">{p.duracion_promo_meses} meses</span>
                             </div>
                           ) : null}
                         </div>
 
-                        {p.descripcion && <p className="text-sm text-volcan-stone/80 mb-4">{p.descripcion}</p>}
+                        {p.descripcion && <p className="text-sm text-volcan-night/85 mb-4">{p.descripcion}</p>}
 
                         <div className="grid grid-cols-2 gap-4 text-xs mt-4">
                           <div>
                             <h4 className="font-bold text-green-700 mb-2">✓ Incluye:</h4>
                             {p.incluye && p.incluye.length ? (
-                              <ul className="space-y-1 list-disc pl-4 text-volcan-stone/85">
+                              <ul className="space-y-1 list-disc pl-4 text-volcan-night/85">
                                 {p.incluye.map((inc, i) => <li key={i}>{inc}</li>)}
                               </ul>
-                            ) : <span className="text-volcan-stone/40">Nada</span>}
+                            ) : <span className="text-volcan-taupe/70">Nada</span>}
                           </div>
                           <div>
                             <h4 className="font-bold text-red-700 mb-2">✗ No incluye:</h4>
                             {p.no_incluye && p.no_incluye.length ? (
-                              <ul className="space-y-1 list-disc pl-4 text-volcan-stone/85">
+                              <ul className="space-y-1 list-disc pl-4 text-volcan-night/85">
                                 {p.no_incluye.map((noinc, i) => <li key={i}>{noinc}</li>)}
                               </ul>
-                            ) : <span className="text-volcan-stone/40">Nada</span>}
+                            ) : <span className="text-volcan-taupe/70">Nada</span>}
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-6 pt-4 border-t border-volcan-sand flex justify-end gap-2 bg-white">
+                      <div className="mt-6 pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
                         <button
                           onClick={() => openEditPlan(p)}
-                          className="p-2 border border-volcan-sand rounded-xl bg-white hover:bg-volcan-cream text-volcan-stone hover:text-volcan-night transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                          className="p-2 border border-volcan-taupe/20 rounded-xl bg-white hover:bg-volcan-cream text-volcan-night hover:text-volcan-night transition-colors flex items-center gap-1.5 text-xs font-semibold"
                         >
                           <Edit size={14} />
                           Editar
@@ -971,23 +1012,23 @@ export default function Admin() {
               </div>
 
               {loadingEquipo ? (
-                <div className="py-20 text-center text-volcan-stone/60">Cargando equipo...</div>
+                <div className="py-20 text-center text-volcan-taupe">Cargando equipo...</div>
               ) : equipo.length === 0 ? (
-                <div className="py-20 text-center text-volcan-stone/60 bg-white rounded-2xl border border-volcan-sand">No hay integrantes en el equipo.</div>
+                <div className="py-20 text-center text-volcan-taupe bg-white rounded-2xl border border-volcan-taupe/20">No hay integrantes en el equipo.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {equipo.map((m) => (
-                    <div key={m.id} className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                    <div key={m.id} className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-volcan-stone/50 font-bold">Orden: {m.orden}</span>
+                          <span className="text-xs text-volcan-taupe font-bold">Orden: {m.orden}</span>
                           <span className="text-xs text-volcan-ember font-bold bg-volcan-ember/15 px-2 py-0.5 rounded-md">ID: {m.id}</span>
                         </div>
                         <h3 className="font-serif font-bold text-xl text-volcan-night mb-1">{m.nombre}</h3>
-                        <p className="text-sm font-semibold text-volcan-stone/70 mb-4">{m.rol}</p>
+                        <p className="text-sm font-semibold text-volcan-taupe mb-4">{m.rol}</p>
                         
                         <div className="my-3 flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-volcan-cream border border-volcan-sand flex items-center justify-center overflow-hidden shrink-0">
+                          <div className="w-12 h-12 rounded-lg bg-volcan-cream border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
                             {m.tiene_imagen ? (
                               <img 
                                 src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/equipo/${m.id}/imagen`} 
@@ -995,22 +1036,22 @@ export default function Admin() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="text-volcan-stone/30 font-serif font-bold text-lg">{m.nombre.charAt(0)}</span>
+                              <span className="text-volcan-taupe/40 font-serif font-bold text-lg">{m.nombre.charAt(0)}</span>
                             )}
                           </div>
                           <div>
-                            <span className="text-xs text-volcan-stone/60 font-semibold block">Foto del Integrante</span>
-                            <span className="text-[10px] text-volcan-stone/40">
+                            <span className="text-xs text-volcan-taupe font-semibold block">Foto del Integrante</span>
+                            <span className="text-[10px] text-volcan-taupe/70">
                               {m.tiene_imagen ? 'Almacenada en BD' : 'Sin foto cargada'}
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-6 pt-4 border-t border-volcan-sand flex justify-end gap-2 bg-white">
+                      <div className="mt-6 pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
                         <button
                           onClick={() => openEditMember(m)}
-                          className="p-2 border border-volcan-sand rounded-xl bg-white hover:bg-volcan-cream text-volcan-stone hover:text-volcan-night transition-colors"
+                          className="p-2 border border-volcan-taupe/20 rounded-xl bg-white hover:bg-volcan-cream text-volcan-night hover:text-volcan-night transition-colors"
                           title="Editar"
                         >
                           <Edit size={14} />
@@ -1031,54 +1072,54 @@ export default function Admin() {
           )}
 
           {activeTab === 'metricas' && (
-            <div className="space-y-8 animate-fade-in text-sm text-volcan-stone">
+            <div className="space-y-8 animate-fade-in text-sm text-volcan-night">
               {loadingMetricas ? (
-                <div className="py-20 text-center text-volcan-stone/60">Cargando métricas...</div>
+                <div className="py-20 text-center text-volcan-taupe">Cargando métricas...</div>
               ) : (
                 <>
                   {/* Resumen Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                       <div className="text-4xl font-serif font-black text-volcan-ember mb-1">
                         {resumenMetricas?.total_leads ?? 0}
                       </div>
-                      <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Total de Leads</div>
+                      <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Total de Leads</div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                       <div className="text-4xl font-serif font-black text-volcan-ember mb-1">
                         {resumenMetricas?.tasa_conversion ?? 0}%
                       </div>
-                      <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Tasa de Conversión</div>
+                      <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Tasa de Conversión</div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                       <div className="text-4xl font-serif font-black text-volcan-ember mb-1">
                         {resumenMetricas?.clientes_activos ?? 0}
                       </div>
-                      <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Clientes Activos</div>
+                      <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Clientes Activos</div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center truncate">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center truncate">
                       <div className="text-2xl font-serif font-bold text-volcan-night mb-2 truncate" title={resumenMetricas?.lead_mas_reciente || 'Ninguno'}>
                         {resumenMetricas?.lead_mas_reciente || '-'}
                       </div>
-                      <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Último Lead Recibido</div>
+                      <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Último Lead Recibido</div>
                     </div>
                   </div>
 
                   {/* Charts Grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Leads por Mes */}
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm">
                       <h3 className="text-lg font-serif font-bold text-volcan-night mb-4">Evolución Mensual (Leads)</h3>
                       <div className="h-80">
                         {leadsPorMes.length === 0 ? (
-                           <div className="h-full flex items-center justify-center text-sm text-volcan-stone/40">Sin datos registrados</div>
+                           <div className="h-full flex items-center justify-center text-sm text-volcan-taupe/70">Sin datos registrados</div>
                         ) : (
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={leadsPorMes} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#F0EBE6" />
                               <XAxis dataKey="mes" stroke="#4B5563" fontSize={12} />
                               <YAxis stroke="#4B5563" fontSize={12} allowDecimals={false} />
-                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #E5DCD3', borderRadius: '12px' }} />
+                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #9E8B7D', borderRadius: '12px' }} />
                               <Legend />
                               <Line type="monotone" dataKey="cantidad" name="Leads" stroke="#D3A784" strokeWidth={3} activeDot={{ r: 8 }} />
                             </LineChart>
@@ -1088,22 +1129,22 @@ export default function Admin() {
                     </div>
 
                     {/* Leads por Estado */}
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm">
                       <h3 className="text-lg font-serif font-bold text-volcan-night mb-4">Leads por Estado</h3>
                       <div className="h-80">
                         {leadsPorEstado.length === 0 ? (
-                          <div className="h-full flex items-center justify-center text-sm text-volcan-stone/40">Sin datos registrados</div>
+                          <div className="h-full flex items-center justify-center text-sm text-volcan-taupe/70">Sin datos registrados</div>
                         ) : (
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={leadsPorEstado} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#F0EBE6" />
                               <XAxis dataKey="estado" stroke="#4B5563" fontSize={12} />
                               <YAxis stroke="#4B5563" fontSize={12} allowDecimals={false} />
-                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #E5DCD3', borderRadius: '12px' }} />
+                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #9E8B7D', borderRadius: '12px' }} />
                               <Legend />
-                              <Bar dataKey="cantidad" name="Leads" fill="#B2845E">
+                              <Bar dataKey="cantidad" name="Leads" fill="#684036">
                                 {leadsPorEstado.map((_, index) => {
-                                  const colors = ['#D3A784', '#B2845E', '#8C5A3C', '#3A332E', '#374151'];
+                                  const colors = ['#D3A784', '#684036', '#9E8B7D', '#231F20', '#555555'];
                                   return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
                                 })}
                               </Bar>
@@ -1114,18 +1155,18 @@ export default function Admin() {
                     </div>
 
                     {/* Leads por Plan */}
-                    <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm lg:col-span-2">
+                    <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm lg:col-span-2">
                       <h3 className="text-lg font-serif font-bold text-volcan-night mb-4">Interés por Plan Comercial</h3>
                       <div className="h-80">
                         {leadsPorPlan.length === 0 ? (
-                          <div className="h-full flex items-center justify-center text-sm text-volcan-stone/40">Sin datos registrados</div>
+                          <div className="h-full flex items-center justify-center text-sm text-volcan-taupe/70">Sin datos registrados</div>
                         ) : (
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={leadsPorPlan} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#F0EBE6" />
                               <XAxis dataKey="plan" stroke="#4B5563" fontSize={12} />
                               <YAxis stroke="#4B5563" fontSize={12} allowDecimals={false} />
-                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #E5DCD3', borderRadius: '12px' }} />
+                              <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #9E8B7D', borderRadius: '12px' }} />
                               <Legend />
                               <Bar dataKey="cantidad" name="Leads" fill="#D3A784" radius={[8, 8, 0, 0]} />
                             </BarChart>
@@ -1136,46 +1177,46 @@ export default function Admin() {
                   </div>
 
                   {/* Estado Técnico */}
-                  <div className="mt-12 pt-8 border-t border-volcan-sand">
+                  <div className="mt-12 pt-8 border-t border-volcan-taupe/20">
                     <h2 className="text-2xl font-serif font-black text-volcan-night mb-6">Estado Técnico del Sitio</h2>
                     
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                      <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                      <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                         <div className="text-4xl font-serif font-black text-volcan-ember mb-1">
                           {metricasTecnicasResumen?.tiempo_respuesta_promedio ?? 0} ms
                         </div>
-                        <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Tiempo Promedio (24h)</div>
+                        <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Tiempo Promedio (24h)</div>
                       </div>
-                      <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                      <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                         <div className="text-4xl font-serif font-black text-volcan-ember mb-1">
                           {metricasTecnicasResumen?.cantidad_total ?? 0}
                         </div>
-                        <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Peticiones Totales (24h)</div>
+                        <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Peticiones Totales (24h)</div>
                       </div>
-                      <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm text-center">
+                      <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm text-center">
                         <div className={`text-4xl font-serif font-black mb-1 ${metricasTecnicasResumen?.tasa_error && metricasTecnicasResumen.tasa_error > 5 ? 'text-red-500' : 'text-volcan-ember'}`}>
                           {metricasTecnicasResumen?.tasa_error ?? 0}%
                         </div>
-                        <div className="text-volcan-stone/60 text-xs font-bold uppercase tracking-wider">Tasa de Error (24h)</div>
+                        <div className="text-volcan-taupe text-xs font-bold uppercase tracking-wider">Tasa de Error (24h)</div>
                       </div>
                     </div>
 
                     {/* Technical Charts Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       {/* Tiempo de Respuesta Line Chart */}
-                      <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm">
+                      <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm">
                         <h3 className="text-lg font-serif font-bold text-volcan-night mb-4">Tiempo de Respuesta Promedio (ms)</h3>
                         <div className="h-80">
                           {metricasTecnicasTiempoRespuesta.length === 0 ? (
-                            <div className="h-full flex items-center justify-center text-sm text-volcan-stone/40">Sin datos registrados</div>
+                            <div className="h-full flex items-center justify-center text-sm text-volcan-taupe/70">Sin datos registrados</div>
                           ) : (
                             <ResponsiveContainer width="100%" height="100%">
                               <LineChart data={metricasTecnicasTiempoRespuesta} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#F0EBE6" />
                                 <XAxis dataKey="hora" stroke="#4B5563" fontSize={12} />
                                 <YAxis stroke="#4B5563" fontSize={12} allowDecimals={true} unit=" ms" />
-                                <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #E5DCD3', borderRadius: '12px' }} />
+                                <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #9E8B7D', borderRadius: '12px' }} />
                                 <Legend />
                                 <Line type="monotone" dataKey="tiempo_promedio" name="Tiempo Promedio" stroke="#D3A784" strokeWidth={3} activeDot={{ r: 8 }} />
                               </LineChart>
@@ -1185,20 +1226,20 @@ export default function Admin() {
                       </div>
 
                       {/* Requests por Endpoint Bar Chart */}
-                      <div className="bg-white p-6 rounded-2xl border border-volcan-sand shadow-sm">
+                      <div className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm">
                         <h3 className="text-lg font-serif font-bold text-volcan-night mb-4">Peticiones por Endpoint (Top 10)</h3>
                         <div className="h-80">
                           {metricasTecnicasRequestsPorEndpoint.length === 0 ? (
-                            <div className="h-full flex items-center justify-center text-sm text-volcan-stone/40">Sin datos registrados</div>
+                            <div className="h-full flex items-center justify-center text-sm text-volcan-taupe/70">Sin datos registrados</div>
                           ) : (
                             <ResponsiveContainer width="100%" height="100%">
                               <BarChart data={metricasTecnicasRequestsPorEndpoint} layout="vertical" margin={{ top: 10, right: 30, left: 40, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#F0EBE6" />
                                 <XAxis type="number" stroke="#4B5563" fontSize={12} allowDecimals={false} />
                                 <YAxis type="category" dataKey="endpoint" stroke="#4B5563" fontSize={10} width={120} />
-                                <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #E5DCD3', borderRadius: '12px' }} />
+                                <Tooltip contentStyle={{ backgroundColor: '#FCFBF9', border: '1px solid #9E8B7D', borderRadius: '12px' }} />
                                 <Legend />
-                                <Bar dataKey="cantidad" name="Peticiones" fill="#B2845E" radius={[0, 4, 4, 0]} />
+                                <Bar dataKey="cantidad" name="Peticiones" fill="#684036" radius={[0, 4, 4, 0]} />
                               </BarChart>
                             </ResponsiveContainer>
                           )}
@@ -1216,10 +1257,10 @@ export default function Admin() {
       {/* -------------------- DETAIL MODAL: LEAD -------------------- */}
       {viewingLead && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full border border-volcan-sand shadow-2xl p-6 relative">
+          <div className="bg-white rounded-2xl max-w-2xl w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
             <button
               onClick={() => setViewingLead(null)}
-              className="absolute top-4 right-4 text-volcan-stone/60 hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
+              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
             >
               <X size={20} />
             </button>
@@ -1228,45 +1269,45 @@ export default function Admin() {
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-2 gap-4 bg-volcan-cream p-4 rounded-xl">
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Nombre:</span>
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Nombre:</span>
                   <span className="font-bold text-volcan-night text-base">{viewingLead.nombre}</span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Negocio / Marca:</span>
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Negocio / Marca:</span>
                   <span className="font-bold text-volcan-night text-base">{viewingLead.negocio || 'No especifica'}</span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Email:</span>
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Email:</span>
                   <a href={`mailto:${viewingLead.email}`} className="text-volcan-ember hover:underline font-medium">{viewingLead.email}</a>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Teléfono:</span>
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Teléfono:</span>
                   {viewingLead.telefono ? (
                     <a href={`tel:${viewingLead.telefono}`} className="text-volcan-night font-medium hover:underline">{viewingLead.telefono}</a>
-                  ) : <span className="text-volcan-stone/40">No especifica</span>}
+                  ) : <span className="text-volcan-taupe/70">No especifica</span>}
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Plan de Interés:</span>
-                  <span className="bg-volcan-sand text-volcan-stone px-2 py-0.5 rounded font-medium text-xs">
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Plan de Interés:</span>
+                  <span className="bg-volcan-taupe/15 text-volcan-night px-2 py-0.5 rounded font-medium text-xs">
                     {viewingLead.plan_interes || 'General'}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-volcan-stone/50 uppercase">Fecha de Envío:</span>
-                  <span className="font-medium text-volcan-stone">{new Date(viewingLead.created_at).toLocaleString()}</span>
+                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Fecha de Envío:</span>
+                  <span className="font-medium text-volcan-night">{new Date(viewingLead.created_at).toLocaleString()}</span>
                 </div>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-volcan-stone/50 uppercase mb-2">Mensaje del Cliente:</span>
-                <div className="bg-volcan-cream/40 border border-volcan-sand p-4 rounded-xl whitespace-pre-wrap leading-relaxed text-volcan-stone/90">
+                <span className="block text-xs font-semibold text-volcan-taupe uppercase mb-2">Mensaje del Cliente:</span>
+                <div className="bg-volcan-cream/40 border border-volcan-taupe/20 p-4 rounded-xl whitespace-pre-wrap leading-relaxed text-volcan-night/90">
                   {viewingLead.mensaje}
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-volcan-sand flex justify-between items-center">
+              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-volcan-stone/60">ESTADO ACTUAL:</span>
+                  <span className="text-xs font-bold text-volcan-taupe">ESTADO ACTUAL:</span>
                   <span className={`px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
                     viewingLead.estado === 'nuevo' ? 'bg-blue-100 text-blue-800' :
                     viewingLead.estado === 'en_proceso' ? 'bg-amber-100 text-amber-800' :
@@ -1300,11 +1341,11 @@ export default function Admin() {
       {/* -------------------- MODAL: CLIENTE FORM -------------------- */}
       {showClienteModal && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveCliente} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-sand shadow-2xl p-6 relative">
+          <form onSubmit={handleSaveCliente} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
             <button
               type="button"
               onClick={() => setShowClienteModal(false)}
-              className="absolute top-4 right-4 text-volcan-stone/60 hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
+              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
             >
               <X size={20} />
             </button>
@@ -1314,61 +1355,61 @@ export default function Admin() {
 
             <div className="space-y-4 text-sm">
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Nombre Comercial *</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Nombre Comercial *</label>
                 <input 
                   type="text" 
                   required
                   value={clienteForm.nombre}
                   onChange={(e) => setClienteForm(prev => ({ ...prev, nombre: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   placeholder="Ej: Alma Flora"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Rubro</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Rubro</label>
                   <input 
                     type="text" 
                     value={clienteForm.rubro}
                     onChange={(e) => setClienteForm(prev => ({ ...prev, rubro: e.target.value }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                     placeholder="Ej: Gastronomía"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Resultado Destacado</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Resultado Destacado</label>
                   <input 
                     type="text" 
                     value={clienteForm.resultado_destacado}
                     onChange={(e) => setClienteForm(prev => ({ ...prev, resultado_destacado: e.target.value }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                     placeholder="Ej: +45% ventas"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Sitio Web / URL enlace</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Sitio Web / URL enlace</label>
                 <input 
                   type="url" 
                   value={clienteForm.sitio_url}
                   onChange={(e) => setClienteForm(prev => ({ ...prev, sitio_url: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   placeholder="https://ejemplo.com"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Logo del Cliente (JPG/PNG/WEBP, máx 5MB)</label>
-                <div className="mt-1 flex items-center gap-4 p-3 border border-dashed border-volcan-sand rounded-xl bg-volcan-cream/30">
-                  <div className="w-16 h-16 rounded-xl bg-white border border-volcan-sand flex items-center justify-center overflow-hidden shrink-0">
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Logo del Cliente (JPG/PNG/WEBP, máx 5MB)</label>
+                <div className="mt-1 flex items-center gap-4 p-3 border border-dashed border-volcan-taupe/20 rounded-xl bg-volcan-cream/30">
+                  <div className="w-16 h-16 rounded-xl bg-white border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
                     {clientePreview ? (
                       <img src={clientePreview} alt="Preview" className="w-full h-full object-contain p-1" />
                     ) : clienteImageUrl ? (
                       <img src={clienteImageUrl} alt="Current" className="w-full h-full object-contain p-1" />
                     ) : (
-                      <span className="text-volcan-stone/30 font-bold text-2xl">?</span>
+                      <span className="text-volcan-taupe/40 font-bold text-2xl">?</span>
                     )}
                   </div>
                   <div className="flex-grow">
@@ -1376,9 +1417,9 @@ export default function Admin() {
                       type="file" 
                       accept="image/png, image/jpeg, image/webp"
                       onChange={handleClienteFileChange}
-                      className="block w-full text-xs text-volcan-stone file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-volcan-ember/15 file:text-volcan-ember hover:file:bg-volcan-ember/25 cursor-pointer"
+                      className="block w-full text-xs text-volcan-night file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-volcan-ember/15 file:text-volcan-ember hover:file:bg-volcan-ember/25 cursor-pointer"
                     />
-                    <p className="mt-1 text-[10px] text-volcan-stone/50">
+                    <p className="mt-1 text-[10px] text-volcan-taupe">
                       {clienteFile ? `Archivo seleccionado: ${clienteFile.name} (${(clienteFile.size / 1024).toFixed(1)} KB)` : 'Seleccioná un archivo para cargar/reemplazar'}
                     </p>
                   </div>
@@ -1386,23 +1427,23 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Testimonio (Reseña)</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Testimonio (Reseña)</label>
                 <textarea 
                   value={clienteForm.testimonio}
                   onChange={(e) => setClienteForm(prev => ({ ...prev, testimonio: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-20 resize-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-20 resize-none"
                   placeholder="Texto del testimonio..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4 items-center">
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Orden de Visualización</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Orden de Visualización</label>
                   <input 
                     type="number" 
                     value={clienteForm.orden}
                     onChange={(e) => setClienteForm(prev => ({ ...prev, orden: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   />
                 </div>
                 <div className="flex items-center gap-2 pt-4">
@@ -1411,56 +1452,56 @@ export default function Admin() {
                     id="activo"
                     checked={clienteForm.activo}
                     onChange={(e) => setClienteForm(prev => ({ ...prev, activo: e.target.checked }))}
-                    className="rounded border-volcan-sand text-volcan-ember focus:ring-volcan-ember h-4 w-4"
+                    className="rounded border-volcan-taupe/20 text-volcan-ember focus:ring-volcan-ember h-4 w-4"
                   />
-                  <label htmlFor="activo" className="text-xs font-bold text-volcan-stone/70 uppercase select-none">Cliente Activo</label>
+                  <label htmlFor="activo" className="text-xs font-bold text-volcan-taupe uppercase select-none">Cliente Activo</label>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Color Primario (Marca)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Color Primario (Marca)</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="color" 
                       value={clienteForm.color_primario || '#D3A784'}
                       onChange={(e) => setClienteForm(prev => ({ ...prev, color_primario: e.target.value }))}
-                      className="w-10 h-10 border border-volcan-sand rounded-xl cursor-pointer p-1 bg-white shrink-0"
+                      className="w-10 h-10 border border-volcan-taupe/20 rounded-xl cursor-pointer p-1 bg-white shrink-0"
                     />
                     <input 
                       type="text" 
                       value={clienteForm.color_primario}
                       onChange={(e) => setClienteForm(prev => ({ ...prev, color_primario: e.target.value }))}
                       placeholder="Ej: #D3A784"
-                      className="flex-grow border border-volcan-sand bg-white rounded-xl p-2.5 focus:ring-2 focus:ring-volcan-ember focus:outline-none text-xs font-mono"
+                      className="flex-grow border border-volcan-taupe/20 bg-white rounded-xl p-2.5 focus:ring-2 focus:ring-volcan-ember focus:outline-none text-xs font-mono"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Color Secundario (Acento)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Color Secundario (Acento)</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="color" 
-                      value={clienteForm.color_secundario || '#B2845E'}
+                      value={clienteForm.color_secundario || '#684036'}
                       onChange={(e) => setClienteForm(prev => ({ ...prev, color_secundario: e.target.value }))}
-                      className="w-10 h-10 border border-volcan-sand rounded-xl cursor-pointer p-1 bg-white shrink-0"
+                      className="w-10 h-10 border border-volcan-taupe/20 rounded-xl cursor-pointer p-1 bg-white shrink-0"
                     />
                     <input 
                       type="text" 
                       value={clienteForm.color_secundario}
                       onChange={(e) => setClienteForm(prev => ({ ...prev, color_secundario: e.target.value }))}
                       placeholder="Opcional"
-                      className="flex-grow border border-volcan-sand bg-white rounded-xl p-2.5 focus:ring-2 focus:ring-volcan-ember focus:outline-none text-xs font-mono"
+                      className="flex-grow border border-volcan-taupe/20 bg-white rounded-xl p-2.5 focus:ring-2 focus:ring-volcan-ember focus:outline-none text-xs font-mono"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-volcan-sand flex justify-end gap-2">
+              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowClienteModal(false)}
-                  className="px-5 py-2.5 border border-volcan-sand text-volcan-stone hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
+                  className="px-5 py-2.5 border border-volcan-taupe/20 text-volcan-night hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -1480,11 +1521,11 @@ export default function Admin() {
       {/* -------------------- MODAL: PLAN FORM -------------------- */}
       {showPlanModal && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleSavePlan} className="bg-white rounded-2xl max-w-xl w-full border border-volcan-sand shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+          <form onSubmit={handleSavePlan} className="bg-white rounded-2xl max-w-xl w-full border border-volcan-taupe/20 shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => setShowPlanModal(false)}
-              className="absolute top-4 right-4 text-volcan-stone/60 hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
+              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
             >
               <X size={20} />
             </button>
@@ -1494,93 +1535,93 @@ export default function Admin() {
 
             <div className="space-y-4 text-sm">
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Nombre del Plan *</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Nombre del Plan *</label>
                 <input 
                   type="text" 
                   required
                   value={planForm.nombre}
                   onChange={(e) => setPlanForm(prev => ({ ...prev, nombre: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   placeholder="Ej: Plan Growth"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Precio Regular (ARS)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Precio Regular (ARS)</label>
                   <input 
                     type="number" 
                     value={planForm.precio_regular}
                     onChange={(e) => setPlanForm(prev => ({ ...prev, precio_regular: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Precio Promo (ARS)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Precio Promo (ARS)</label>
                   <input 
                     type="number" 
                     value={planForm.precio_promo}
                     onChange={(e) => setPlanForm(prev => ({ ...prev, precio_promo: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Duración Promo (Meses)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Duración Promo (Meses)</label>
                   <input 
                     type="number" 
                     value={planForm.duracion_promo_meses}
                     onChange={(e) => setPlanForm(prev => ({ ...prev, duracion_promo_meses: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Descripción Breve</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Descripción Breve</label>
                 <textarea 
                   value={planForm.descripcion}
                   onChange={(e) => setPlanForm(prev => ({ ...prev, descripcion: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-16 resize-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-16 resize-none"
                   placeholder="Texto descriptivo para la landing..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Qué Incluye (1 por línea)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Qué Incluye (1 por línea)</label>
                   <textarea 
                     value={planForm.incluyeRaw}
                     onChange={(e) => setPlanForm(prev => ({ ...prev, incluyeRaw: e.target.value }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-32"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-32"
                     placeholder="Diagnóstico inicial&#10;Google Analytics 4&#10;Soporte 24/7"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Qué NO Incluye (1 por línea)</label>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Qué NO Incluye (1 por línea)</label>
                   <textarea 
                     value={planForm.no_incluyeRaw}
                     onChange={(e) => setPlanForm(prev => ({ ...prev, no_incluyeRaw: e.target.value }))}
-                    className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-32"
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-32"
                     placeholder="Inversión publicitaria&#10;Filmación en locación"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Orden del Plan (Posición)</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Orden del Plan (Posición)</label>
                 <input 
                   type="number" 
                   value={planForm.orden}
                   onChange={(e) => setPlanForm(prev => ({ ...prev, orden: parseInt(e.target.value) || 0 }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                 />
               </div>
 
-              <div className="pt-4 border-t border-volcan-sand flex justify-end gap-2 bg-white">
+              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
                 <button
                   type="button"
                   onClick={() => setShowPlanModal(false)}
-                  className="px-5 py-2.5 border border-volcan-sand text-volcan-stone hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
+                  className="px-5 py-2.5 border border-volcan-taupe/20 text-volcan-night hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -1600,11 +1641,11 @@ export default function Admin() {
       {/* -------------------- MODAL: EQUIPO FORM -------------------- */}
       {showMemberModal && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveMember} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-sand shadow-2xl p-6 relative">
+          <form onSubmit={handleSaveMember} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
             <button
               type="button"
               onClick={() => setShowMemberModal(false)}
-              className="absolute top-4 right-4 text-volcan-stone/60 hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
+              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
             >
               <X size={20} />
             </button>
@@ -1614,39 +1655,39 @@ export default function Admin() {
 
             <div className="space-y-4 text-sm">
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Nombre Completo *</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Nombre Completo *</label>
                 <input 
                   type="text" 
                   required
                   value={memberForm.nombre}
                   onChange={(e) => setMemberForm(prev => ({ ...prev, nombre: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   placeholder="Ej: Pablo"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Rol / Especialidad *</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Rol / Especialidad *</label>
                 <input 
                   type="text" 
                   required
                   value={memberForm.rol}
                   onChange={(e) => setMemberForm(prev => ({ ...prev, rol: e.target.value }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   placeholder="Ej: Especialista Meta Ads, WP"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Foto del Integrante (JPG/PNG/WEBP, máx 5MB)</label>
-                <div className="mt-1 flex items-center gap-4 p-3 border border-dashed border-volcan-sand rounded-xl bg-volcan-cream/30">
-                  <div className="w-16 h-16 rounded-xl bg-white border border-volcan-sand flex items-center justify-center overflow-hidden shrink-0">
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Foto del Integrante (JPG/PNG/WEBP, máx 5MB)</label>
+                <div className="mt-1 flex items-center gap-4 p-3 border border-dashed border-volcan-taupe/20 rounded-xl bg-volcan-cream/30">
+                  <div className="w-16 h-16 rounded-xl bg-white border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
                     {memberPreview ? (
                       <img src={memberPreview} alt="Preview" className="w-full h-full object-cover" />
                     ) : memberImageUrl ? (
                       <img src={memberImageUrl} alt="Current" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-volcan-stone/30 font-bold text-2xl">?</span>
+                      <span className="text-volcan-taupe/40 font-bold text-2xl">?</span>
                     )}
                   </div>
                   <div className="flex-grow">
@@ -1654,9 +1695,9 @@ export default function Admin() {
                       type="file" 
                       accept="image/png, image/jpeg, image/webp"
                       onChange={handleMemberFileChange}
-                      className="block w-full text-xs text-volcan-stone file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-volcan-ember/15 file:text-volcan-ember hover:file:bg-volcan-ember/25 cursor-pointer"
+                      className="block w-full text-xs text-volcan-night file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-volcan-ember/15 file:text-volcan-ember hover:file:bg-volcan-ember/25 cursor-pointer"
                     />
-                    <p className="mt-1 text-[10px] text-volcan-stone/50">
+                    <p className="mt-1 text-[10px] text-volcan-taupe">
                       {memberFile ? `Archivo seleccionado: ${memberFile.name} (${(memberFile.size / 1024).toFixed(1)} KB)` : 'Seleccioná un archivo para cargar/reemplazar'}
                     </p>
                   </div>
@@ -1664,20 +1705,20 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-volcan-stone/70 uppercase mb-1">Orden de Visualización</label>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Orden de Visualización</label>
                 <input 
                   type="number" 
                   value={memberForm.orden}
                   onChange={(e) => setMemberForm(prev => ({ ...prev, orden: parseInt(e.target.value) || 0 }))}
-                  className="w-full border border-volcan-sand bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                 />
               </div>
 
-              <div className="pt-4 border-t border-volcan-sand flex justify-end gap-2 bg-white">
+              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
                 <button
                   type="button"
                   onClick={() => setShowMemberModal(false)}
-                  className="px-5 py-2.5 border border-volcan-sand text-volcan-stone hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
+                  className="px-5 py-2.5 border border-volcan-taupe/20 text-volcan-night hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
                 >
                   Cancelar
                 </button>

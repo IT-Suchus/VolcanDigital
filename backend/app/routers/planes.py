@@ -4,6 +4,7 @@ from typing import List
 from app.database import get_db
 from app.models import Plan
 from app.schemas import PlanResponse, PlanCreate, PlanUpdate
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/planes", tags=["Planes"])
 
@@ -12,7 +13,7 @@ def get_planes(db: Session = Depends(get_db)):
     return db.query(Plan).order_by(Plan.orden).all()
 
 @router.post("/", response_model=PlanResponse, status_code=status.HTTP_201_CREATED)
-def create_plan(plan: PlanCreate, db: Session = Depends(get_db)):
+def create_plan(plan: PlanCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_plan = Plan(**plan.model_dump())
     db.add(db_plan)
     db.commit()
@@ -20,7 +21,7 @@ def create_plan(plan: PlanCreate, db: Session = Depends(get_db)):
     return db_plan
 
 @router.put("/{plan_id}", response_model=PlanResponse)
-def update_plan(plan_id: int, plan_update: PlanUpdate, db: Session = Depends(get_db)):
+def update_plan(plan_id: int, plan_update: PlanUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_plan = db.query(Plan).filter(Plan.id == plan_id).first()
     if not db_plan:
         raise HTTPException(status_code=404, detail="Plan no encontrado")
@@ -34,7 +35,7 @@ def update_plan(plan_id: int, plan_update: PlanUpdate, db: Session = Depends(get
     return db_plan
 
 @router.delete("/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_plan(plan_id: int, db: Session = Depends(get_db)):
+def delete_plan(plan_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_plan = db.query(Plan).filter(Plan.id == plan_id).first()
     if not db_plan:
         raise HTTPException(status_code=404, detail="Plan no encontrado")

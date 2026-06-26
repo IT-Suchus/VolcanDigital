@@ -98,3 +98,27 @@ class IntegranteResponse(IntegranteCreate):
     class Config:
         from_attributes = True
 
+# Usuarios
+class UsuarioCreate(BaseModel):
+    email: EmailStr
+    password: str
+    rol: str
+
+class UsuarioLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UsuarioResponse(BaseModel):
+    id: int
+    email: EmailStr
+    rol: str
+
+    class Config:
+        from_attributes = True
+
+class LoginResponse(BaseModel):
+    token: str
+    email: str
+    rol: str
+
+

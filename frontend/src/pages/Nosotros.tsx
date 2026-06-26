@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchEquipo, Integrante } from '../lib/api';
+import { Flame } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -29,7 +30,7 @@ export default function Nosotros() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-white mb-8">
               Una agencia enfocada en lo que importa
             </h1>
-            <div className="space-y-6 text-lg text-volcan-sand/90">
+            <div className="space-y-6 text-lg text-volcan-cream/90">
               <p>
                 Volcán Digital nació con una premisa simple: <strong className="text-white font-medium">menos humo, más resultados medibles</strong>. 
                 Fundada por Vitória y Pablo, nos cansamos de ver agencias que vendían "likes" y "branding" sin impacto real en la facturación.
@@ -48,15 +49,15 @@ export default function Nosotros() {
           <div className="text-center mb-16">
             <FadeUp>
               <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night mb-4">El Equipo</h2>
-              <p className="text-lg text-volcan-stone">Especialistas detrás de cada campaña.</p>
+              <p className="text-lg text-volcan-taupe">Especialistas detrás de cada campaña.</p>
             </FadeUp>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {equipo.map((miembro, index) => (
               <FadeUp key={miembro.id} delay={index * 0.1}>
-                <div className="bg-white rounded-3xl overflow-hidden border border-volcan-sand shadow-sm hover:shadow-md transition-shadow group">
-                  <div className="aspect-square bg-volcan-stone/10 relative">
+                <div className="bg-white rounded-3xl overflow-hidden border border-volcan-taupe/20 shadow-sm hover:shadow-md transition-shadow group">
+                  <div className="aspect-square bg-volcan-taupe/10 relative">
                     {miembro.tiene_imagen ? (
                       <img 
                         src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/equipo/${miembro.id}/imagen`} 
@@ -64,12 +65,12 @@ export default function Nosotros() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-volcan-stone/30 font-serif text-5xl font-bold bg-gradient-to-br from-volcan-sand to-volcan-cream">
+                      <div className="absolute inset-0 flex items-center justify-center text-volcan-taupe/40 font-serif text-5xl font-bold bg-gradient-to-br from-volcan-cream to-white">
                         {miembro.nombre.charAt(0)}
                       </div>
                     )}
                   </div>
-                  <div className="p-8 text-center border-t border-volcan-sand">
+                  <div className="p-8 text-center border-t border-volcan-taupe/20">
                     <h3 className="text-2xl font-serif font-bold text-volcan-night mb-2">{miembro.nombre}</h3>
                     <p className="text-volcan-ember font-medium text-sm">{miembro.rol}</p>
                   </div>
@@ -80,15 +81,22 @@ export default function Nosotros() {
         </div>
       </section>
 
+      {/* Separator: Llama */}
+      <div className="flex items-center justify-center bg-volcan-cream pt-12">
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <Flame className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+      </div>
+
       {/* Certifications */}
-      <section className="bg-volcan-sand py-20">
+      <section className="bg-volcan-cream py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
-            <h3 className="text-sm font-bold text-volcan-stone/50 uppercase tracking-widest mb-8">Certificaciones y Formación</h3>
+            <h3 className="text-sm font-bold text-volcan-taupe uppercase tracking-widest mb-8">Certificaciones y Formación</h3>
             <div className="flex flex-wrap justify-center gap-12 opacity-70">
-              <span className="font-serif text-2xl font-bold text-volcan-stone">Google Search Ads</span>
-              <span className="font-serif text-2xl font-bold text-volcan-stone">Google Analytics 4</span>
-              <span className="font-serif text-2xl font-bold text-volcan-stone">Coderhouse</span>
+              <span className="font-serif text-2xl font-bold text-volcan-night">Google Search Ads</span>
+              <span className="font-serif text-2xl font-bold text-volcan-night">Google Analytics 4</span>
+              <span className="font-serif text-2xl font-bold text-volcan-night">Coderhouse</span>
             </div>
           </FadeUp>
         </div>

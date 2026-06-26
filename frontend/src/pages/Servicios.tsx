@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchPlanes, Plan } from '../lib/api';
-import { Check, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, X, ChevronDown, ChevronUp, Flame, Zap } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -18,7 +18,7 @@ const Accordion = ({ question, answer }: { question: string, answer: string }) =
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-volcan-stone/20">
+    <div className="border-b border-volcan-taupe/20">
       <button
         className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
@@ -31,7 +31,7 @@ const Accordion = ({ question, answer }: { question: string, answer: string }) =
         animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
         className="overflow-hidden"
       >
-        <div className="pb-6 text-volcan-stone/80">
+        <div className="pb-6 text-volcan-taupe">
           {answer}
         </div>
       </motion.div>
@@ -72,11 +72,11 @@ export default function Servicios() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="bg-volcan-night text-center py-20 lg:py-32 border-b border-volcan-stone">
+      <section className="bg-volcan-night text-center py-20 lg:py-32 border-b border-volcan-taupe/20">
         <div className="max-w-4xl mx-auto px-4">
           <FadeUp>
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6">Planes de Gestión</h1>
-            <p className="text-xl text-volcan-sand/90">Menos humo, más resultados medibles. Elegí el nivel de acompañamiento que tu negocio necesita para escalar.</p>
+            <p className="text-xl text-volcan-cream/90">Menos humo, más resultados medibles. Elegí el nivel de acompañamiento que tu negocio necesita para escalar.</p>
           </FadeUp>
         </div>
       </section>
@@ -89,7 +89,7 @@ export default function Servicios() {
               const isDestacado = plan.nombre === 'Performance';
               return (
                 <FadeUp key={plan.id} delay={index * 0.1}>
-                  <div className={`relative bg-white rounded-3xl p-8 shadow-lg transition-transform hover:-translate-y-2 ${isDestacado ? 'border-2 border-volcan-ember shadow-volcan-ember/10 scale-105 md:z-10' : 'border border-volcan-sand'}`}>
+                  <div className={`relative bg-white rounded-3xl p-8 shadow-lg transition-transform hover:-translate-y-2 ${isDestacado ? 'border-2 border-volcan-ember shadow-volcan-ember/10 scale-105 md:z-10' : 'border border-volcan-taupe/20'}`}>
                     {isDestacado && (
                       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-brand text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
                         MÁS ELEGIDO
@@ -97,48 +97,48 @@ export default function Servicios() {
                     )}
                     
                     <h3 className="text-2xl font-serif font-bold mb-2">{plan.nombre}</h3>
-                    <p className="text-sm text-volcan-stone/70 mb-6 min-h-[40px]">{plan.descripcion}</p>
+                    <p className="text-sm text-volcan-taupe mb-6 min-h-[40px]">{plan.descripcion}</p>
                     
                     <div className="mb-8">
                       {plan.precio_promo && plan.precio_regular ? (
                         <>
                           <div className="flex items-baseline gap-2 mb-1">
                             <span className="text-4xl font-bold text-volcan-night">{formatPrice(plan.precio_promo)}</span>
-                            <span className="text-sm text-volcan-stone/70">/mes</span>
+                            <span className="text-sm text-volcan-taupe">/mes</span>
                           </div>
                           <div className="text-xs text-volcan-ember font-medium mb-1">Promo por {plan.duracion_promo_meses} meses</div>
-                          <div className="text-sm text-volcan-stone/50 line-through">Regular: {formatPrice(plan.precio_regular)}/mes</div>
+                          <div className="text-sm text-volcan-taupe/65 line-through">Regular: {formatPrice(plan.precio_regular)}/mes</div>
                         </>
                       ) : (
                         <div className="flex items-baseline gap-2 mb-1">
                           <span className="text-xl font-medium text-volcan-night">Desde</span>
                           <span className="text-4xl font-bold text-volcan-night">{formatPrice(plan.precio_regular || plan.precio_promo || 0)}</span>
-                          <span className="text-sm text-volcan-stone/70">/mes</span>
+                          <span className="text-sm text-volcan-taupe">/mes</span>
                         </div>
                       )}
                     </div>
 
-                    <a href={`/contacto?plan=${plan.nombre}`} className={`block text-center w-full py-3 rounded-xl font-bold transition-colors mb-8 ${isDestacado ? 'bg-volcan-ember text-volcan-night hover:bg-volcan-clay hover:text-white' : 'bg-volcan-sand/50 text-volcan-night hover:bg-volcan-sand'}`}>
+                    <a href={`/contacto?plan=${plan.nombre}`} className={`block text-center w-full py-3 rounded-xl font-bold transition-colors mb-8 ${isDestacado ? 'bg-volcan-ember text-volcan-night hover:bg-volcan-clay hover:text-white' : 'bg-volcan-taupe/15 text-volcan-night hover:bg-volcan-taupe/25'}`}>
                       Seleccionar Plan
                     </a>
 
                     <div className="space-y-4">
-                      <p className="text-xs font-bold uppercase tracking-wider text-volcan-stone/50 mb-4">Qué incluye</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-4">Qué incluye</p>
                       {plan.incluye?.map((item, i) => (
                         <div key={i} className="flex items-start gap-3">
                           <Check size={18} className="text-green-500 shrink-0 mt-0.5" />
-                          <span className="text-sm text-volcan-stone/90">{item}</span>
+                          <span className="text-sm text-volcan-night/95">{item}</span>
                         </div>
                       ))}
                       
                       {plan.no_incluye && plan.no_incluye.length > 0 && (
                         <>
-                          <div className="w-full h-px bg-volcan-sand/50 my-6"></div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-volcan-stone/50 mb-4">No incluye</p>
+                          <div className="w-full h-px bg-volcan-taupe/20 my-6"></div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-4">No incluye</p>
                           {plan.no_incluye.map((item, i) => (
                             <div key={i} className="flex items-start gap-3">
                               <X size={18} className="text-red-400 shrink-0 mt-0.5" />
-                              <span className="text-sm text-volcan-stone/50">{item}</span>
+                              <span className="text-sm text-volcan-taupe/80">{item}</span>
                             </div>
                           ))}
                         </>
@@ -152,20 +152,27 @@ export default function Servicios() {
         </div>
       </section>
 
+      {/* Separator: Llama */}
+      <div className="flex items-center justify-center bg-volcan-cream pt-12">
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <Flame className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+      </div>
+
       {/* Extra Services */}
-      <section className="py-20 bg-volcan-sand">
+      <section className="py-20 bg-volcan-cream">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeUp>
             <h3 className="text-3xl font-serif font-bold mb-10">Servicios Adicionales de Contenido</h3>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-cream">
+              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20">
                 <h4 className="text-xl font-bold text-volcan-night mb-2">Filmaker</h4>
-                <p className="text-volcan-stone/80 text-sm mb-4">Grabación presencial (La Plata/CABA) y edición de 4 videos optimizados para pauta.</p>
+                <p className="text-volcan-taupe text-sm mb-4">Grabación presencial (La Plata/CABA) y edición de 4 videos optimizados para pauta.</p>
                 <div className="text-2xl font-bold text-volcan-ember">$180.000</div>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-cream">
+              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20">
                 <h4 className="text-xl font-bold text-volcan-night mb-2">Edición de Video</h4>
-                <p className="text-volcan-stone/80 text-sm mb-4">Edición dinámica de 4 videos utilizando el material crudo enviado por vos.</p>
+                <p className="text-volcan-taupe text-sm mb-4">Edición dinámica de 4 videos utilizando el material crudo enviado por vos.</p>
                 <div className="text-2xl font-bold text-volcan-ember">$100.000</div>
               </div>
             </div>
@@ -173,12 +180,19 @@ export default function Servicios() {
         </div>
       </section>
 
+      {/* Separator: Rayo */}
+      <div className="flex items-center justify-center bg-volcan-cream pt-12">
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <Zap className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+      </div>
+
       {/* FAQ */}
       <section className="py-24 bg-volcan-cream">
         <div className="max-w-3xl mx-auto px-4">
           <FadeUp>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-center mb-12">Preguntas Frecuentes</h2>
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-volcan-sand">
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-volcan-taupe/20">
               {faqs.map((faq, i) => (
                 <Accordion key={i} question={faq.question} answer={faq.answer} />
               ))}

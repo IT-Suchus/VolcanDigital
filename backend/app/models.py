@@ -72,3 +72,12 @@ class MetricaRequest(Base):
     status_code = Column(Integer, nullable=False)
     tiempo_respuesta_ms = Column(Integer, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    rol = Column(String(50), nullable=False) # "administrador" o "desarrollador"
+

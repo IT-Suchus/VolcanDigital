@@ -5,6 +5,7 @@ from typing import List
 from app.database import get_db
 from app.models import Integrante
 from app.schemas import IntegranteResponse, IntegranteCreate, IntegranteUpdate
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/equipo", tags=["Equipo"])
 
@@ -13,7 +14,7 @@ def get_equipo(db: Session = Depends(get_db)):
     return db.query(Integrante).order_by(Integrante.orden).all()
 
 @router.post("/", response_model=IntegranteResponse, status_code=status.HTTP_201_CREATED)
-def create_integrante(integrante: IntegranteCreate, db: Session = Depends(get_db)):
+def create_integrante(integrante: IntegranteCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_integrante = Integrante(**integrante.model_dump())
     db.add(db_integrante)
     db.commit()
@@ -21,7 +22,7 @@ def create_integrante(integrante: IntegranteCreate, db: Session = Depends(get_db
     return db_integrante
 
 @router.put("/{member_id}", response_model=IntegranteResponse)
-def update_integrante(member_id: int, integrante_update: IntegranteUpdate, db: Session = Depends(get_db)):
+def update_integrante(member_id: int, integrante_update: IntegranteUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_integrante = db.query(Integrante).filter(Integrante.id == member_id).first()
     if not db_integrante:
         raise HTTPException(status_code=404, detail="Integrante del equipo no encontrado")
@@ -35,7 +36,7 @@ def update_integrante(member_id: int, integrante_update: IntegranteUpdate, db: S
     return db_integrante
 
 @router.delete("/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_integrante(member_id: int, db: Session = Depends(get_db)):
+def delete_integrante(member_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_integrante = db.query(Integrante).filter(Integrante.id == member_id).first()
     if not db_integrante:
         raise HTTPException(status_code=404, detail="Integrante del equipo no encontrado")
@@ -45,7 +46,7 @@ def delete_integrante(member_id: int, db: Session = Depends(get_db)):
     return None
 
 @router.put("/{member_id}/imagen")
-async def upload_integrante_imagen(member_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_integrante_imagen(member_id: int, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     content_type = file.content_type
     
     # Fallback robusto al nombre del archivo para detectar el tipo mime si es genérico

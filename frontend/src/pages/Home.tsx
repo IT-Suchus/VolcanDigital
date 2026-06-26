@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchClientes, Cliente } from '../lib/api';
-import { Target, TrendingUp, Users, MonitorSmartphone } from 'lucide-react';
+import { Target, TrendingUp, Users, MonitorSmartphone, Flame, Zap, Quote } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -30,6 +30,12 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-volcan-night relative overflow-hidden py-24 sm:py-32 lg:py-40">
         <div className="absolute inset-0 bg-gradient-brand opacity-10"></div>
+        {/* Decorative background icons */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+          <Flame className="absolute -top-10 left-10 text-volcan-ember/5 w-32 h-32 rotate-12" />
+          <Zap className="absolute top-1/2 -right-12 text-volcan-taupe/5 w-48 h-48 -rotate-12" />
+          <Quote className="absolute -bottom-16 left-1/4 text-volcan-ember/5 w-40 h-40 rotate-45" />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <FadeUp>
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold text-white tracking-tight mb-6">
@@ -37,16 +43,16 @@ export default function Home() {
             </h1>
           </FadeUp>
           <FadeUp delay={0.2}>
-            <p className="mt-6 text-xl text-volcan-sand/90 max-w-2xl mx-auto mb-10">
+            <p className="mt-6 text-xl text-volcan-cream/90 max-w-2xl mx-auto mb-10">
               Ayudamos a tu negocio en cada etapa de crecimiento. Menos humo, más resultados medibles.
             </p>
           </FadeUp>
           <FadeUp delay={0.4}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="https://wa.me/5492216743529" className="btn-gradient-whatsapp btn-glow-whatsapp text-volcan-night px-8 py-4 rounded-xl font-bold hover:scale-[1.02] hover:opacity-95 transition-all duration-300 text-lg">
+              <a href="https://wa.me/5492216743529" className="btn-gradient-whatsapp btn-glow-whatsapp text-white px-8 py-4 rounded-xl font-bold hover:scale-[1.02] hover:opacity-95 transition-all duration-300 text-lg">
                 Hablar por WhatsApp
               </a>
-              <Link to="/servicios" className="bg-transparent border border-volcan-sand text-volcan-sand px-8 py-4 rounded-xl font-medium hover:bg-volcan-sand hover:text-volcan-night transition-colors text-lg">
+              <Link to="/servicios" className="bg-transparent border border-volcan-ember text-volcan-ember px-8 py-4 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-lg">
                 Ver servicios
               </Link>
             </div>
@@ -55,25 +61,25 @@ export default function Home() {
       </section>
 
       {/* Impact Numbers */}
-      <section className="bg-volcan-sand py-20">
+      <section className="bg-volcan-cream py-20 border-y border-volcan-taupe/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <FadeUp delay={0.1}>
               <div className="p-6 flex flex-col items-center justify-center">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-black text-volcan-ember leading-none mb-3">+10</div>
-                <div className="text-volcan-stone font-semibold text-sm sm:text-base tracking-wider uppercase">Clientes activos</div>
+                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Clientes activos</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
               <div className="p-6 flex flex-col items-center justify-center">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-black text-volcan-ember leading-none mb-3">+2</div>
-                <div className="text-volcan-stone font-semibold text-sm sm:text-base tracking-wider uppercase">Años de experiencia</div>
+                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Años de experiencia</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.3}>
               <div className="p-6 flex flex-col items-center justify-center">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-black text-volcan-ember leading-none mb-3">ARG/BR</div>
-                <div className="text-volcan-stone font-semibold text-sm sm:text-base tracking-wider uppercase">Presencia Internacional</div>
+                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Presencia Internacional</div>
               </div>
             </FadeUp>
           </div>
@@ -81,13 +87,13 @@ export default function Home() {
       </section>
 
       {/* Meta Ads Section */}
-      <section className="bg-volcan-night text-volcan-sand py-24">
+      <section className="bg-volcan-night text-volcan-cream py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <div className="space-y-6">
                 <h2 className="text-3xl md:text-5xl font-serif font-bold text-white">Publicidad en Redes Sociales</h2>
-                <p className="text-lg text-volcan-sand/80">
+                <p className="text-lg text-volcan-cream/80">
                   Creamos campañas rentables en Meta Ads (Instagram y Facebook) diseñadas específicamente para atraer clientes potenciales cualificados y aumentar tus ventas directas.
                 </p>
                 <ul className="space-y-4 pt-4">
@@ -113,7 +119,7 @@ export default function Home() {
             </FadeUp>
             <FadeUp delay={0.2}>
               <div className="relative">
-                <div className="aspect-square bg-volcan-stone/30 rounded-3xl border border-volcan-stone p-8 flex items-center justify-center relative overflow-hidden group">
+                <div className="aspect-square bg-volcan-taupe/10 rounded-3xl border border-volcan-taupe/20 p-8 flex items-center justify-center relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-brand opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
                   <MonitorSmartphone size={120} className="text-volcan-ember/50" />
                 </div>
@@ -124,7 +130,7 @@ export default function Home() {
       </section>
 
       {/* Data Section */}
-      <section className="bg-volcan-cream text-volcan-stone py-24">
+      <section className="bg-volcan-cream text-volcan-night py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
           <FadeUp>
             <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6">Medimos y usamos datos</h2>
@@ -135,22 +141,22 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <FadeUp delay={0.1}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-sand hover:border-volcan-ember/30 transition-colors">
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
                 <div className="font-semibold text-lg">Google Analytics 4</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-sand hover:border-volcan-ember/30 transition-colors">
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
                 <div className="font-semibold text-lg">Meta Pixel & CAPI</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-sand hover:border-volcan-ember/30 transition-colors">
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
                 <div className="font-semibold text-lg">Looker Studio</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.4}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-sand hover:border-volcan-ember/30 transition-colors">
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
                 <div className="font-semibold text-lg">Search Console</div>
               </div>
             </FadeUp>
@@ -163,7 +169,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">¿Tenés dudas sobre qué necesita tu negocio?</h2>
-            <Link to="/contacto" className="bg-white text-volcan-magma px-8 py-4 rounded-xl font-bold hover:bg-volcan-sand transition-colors text-lg inline-block shadow-xl">
+            <Link to="/contacto" className="bg-white text-volcan-clay px-8 py-4 rounded-xl font-bold hover:bg-volcan-cream transition-colors text-lg inline-block shadow-xl">
               Agendar diagnóstico gratuito
             </Link>
           </FadeUp>
@@ -171,12 +177,12 @@ export default function Home() {
       </section>
 
       {/* Clients Section */}
-      <section className="bg-volcan-sand py-24">
+      <section className="bg-volcan-cream py-24 border-t border-volcan-taupe/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeUp>
               <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night mb-4">Ellos nos eligen</h2>
-              <p className="text-lg text-volcan-stone">Marcas que escalan su facturación con nosotros.</p>
+              <p className="text-lg text-volcan-taupe">Marcas que escalan su facturación con nosotros.</p>
             </FadeUp>
           </div>
 
@@ -184,7 +190,7 @@ export default function Home() {
             {clientes.map((cliente, index) => (
               <FadeUp key={cliente.id} delay={0.1 * index}>
                 <a href={cliente.sitio_url || '#'} target="_blank" rel="noreferrer" className="block group">
-                  <div className="bg-white aspect-[3/2] rounded-2xl p-6 flex flex-col items-center justify-center border border-volcan-cream shadow-sm hover:shadow-md transition-all grayscale hover:grayscale-0 overflow-hidden">
+                  <div className="bg-white aspect-[3/2] rounded-2xl p-6 flex flex-col items-center justify-center border border-volcan-taupe/20 shadow-sm hover:shadow-md transition-all grayscale hover:grayscale-0 overflow-hidden">
                     {cliente.tiene_imagen ? (
                       <img
                         src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clientes/${cliente.id}/imagen`}
@@ -194,7 +200,7 @@ export default function Home() {
                     ) : (
                       <>
                         <span className="font-serif font-bold text-xl text-center mb-2 group-hover:text-volcan-ember transition-colors">{cliente.nombre}</span>
-                        <span className="text-xs text-volcan-stone/70">{cliente.rubro}</span>
+                        <span className="text-xs text-volcan-taupe">{cliente.rubro}</span>
                       </>
                     )}
                   </div>
@@ -204,7 +210,7 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/clientes" className="text-volcan-ember font-medium hover:text-volcan-magma transition-colors">
+            <Link to="/clientes" className="text-volcan-ember font-medium hover:text-volcan-clay transition-colors">
               Ver todos los casos de éxito →
             </Link>
           </div>

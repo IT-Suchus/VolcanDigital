@@ -5,8 +5,9 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 from app.database import get_db
 from app.models import Lead, Cliente, MetricaRequest
+from app.auth import get_current_user
 
-router = APIRouter(prefix="/api/admin/metricas", tags=["Métricas"])
+router = APIRouter(prefix="/api/admin/metricas", tags=["Métricas"], dependencies=[Depends(get_current_user)])
 
 @router.get("/leads-por-mes", response_model=List[Dict[str, Any]])
 def get_leads_por_mes(db: Session = Depends(get_db)):

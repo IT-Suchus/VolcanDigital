@@ -2,7 +2,7 @@ import os
 import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import clientes, planes, equipo, leads, metricas
+from app.routers import clientes, planes, equipo, leads, metricas, auth
 from app.database import SessionLocal
 from app.models import MetricaRequest
 
@@ -51,6 +51,7 @@ app.add_middleware(
 )
 
 # Incluir routers
+app.include_router(auth.router)
 app.include_router(clientes.router)
 app.include_router(planes.router)
 app.include_router(equipo.router)

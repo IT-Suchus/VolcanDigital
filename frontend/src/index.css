@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-volcan-cream text-volcan-stone font-sans antialiased;
+    @apply bg-volcan-cream text-volcan-night font-sans antialiased;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -19,7 +19,7 @@
 
 @layer utilities {
   .btn-gradient-whatsapp {
-    background: linear-gradient(135deg, #D3A784 0%, #B2845E 100%) !important;
+    background: linear-gradient(135deg, #231F20 0%, #684036 55%, #D3A784 100%) !important;
   }
 
   .btn-glow-whatsapp {

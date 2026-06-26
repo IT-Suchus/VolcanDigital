@@ -7,6 +7,14 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('volcan_auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export interface Plan {
   id: number;
   nombre: string;
@@ -227,6 +235,11 @@ export const fetchMetricasTecnicasTiempoRespuesta = async (): Promise<MetricasTe
 
 export const fetchMetricasTecnicasRequestsPorEndpoint = async (): Promise<MetricasTecnicasRequestsPorEndpoint[]> => {
   const { data } = await api.get('/api/admin/metricas/tecnicas/requests-por-endpoint');
+  return data;
+};
+
+export const loginUser = async (email: string, password: string): Promise<{ token: string; email: string; rol: string }> => {
+  const { data } = await api.post('/api/auth/login', { email, password });
   return data;
 };
 
