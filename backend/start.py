@@ -15,6 +15,9 @@ def wait_for_db(retries: int = 30, delay: float = 2.0):
     if not db_url:
         print("ERROR: DATABASE_URL not set.")
         sys.exit(1)
+        
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
 
     if not HAS_PSYCOPG2:
         print("psycopg2 not available, skipping DB wait check.")
