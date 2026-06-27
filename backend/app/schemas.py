@@ -99,19 +99,34 @@ class IntegranteResponse(IntegranteCreate):
         from_attributes = True
 
 # Usuarios
+class UsuarioRegister(BaseModel):
+    nombre: str = Field(..., min_length=2, max_length=255)
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+
 class UsuarioCreate(BaseModel):
+    nombre: Optional[str] = None
     email: EmailStr
     password: str
-    rol: str
+    rol: str = "colaborador"
+    estado: str = "activo"  # admin creating directly → activo
 
 class UsuarioLogin(BaseModel):
     email: EmailStr
     password: str
 
+class UsuarioAdminUpdate(BaseModel):
+    estado: Optional[str] = None   # "activo" | "rechazado" | "pendiente"
+    rol: Optional[str] = None      # "administrador" | "desarrollador" | "colaborador"
+    nombre: Optional[str] = None
+
 class UsuarioResponse(BaseModel):
     id: int
+    nombre: Optional[str] = None
     email: EmailStr
     rol: str
+    estado: str
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -120,5 +135,4 @@ class LoginResponse(BaseModel):
     token: str
     email: str
     rol: str
-
-
+    nombre: Optional[str] = None

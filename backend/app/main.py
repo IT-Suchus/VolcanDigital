@@ -36,11 +36,16 @@ async def log_requests(request: Request, call_next):
     return response
 
 # Configurar CORS
+_frontend_url = os.getenv("FRONTEND_URL", "")
 origins = [
-    "http://localhost:5173", # Vite dev server
+    "http://localhost:5173",   # Vite dev
     "http://127.0.0.1:5173",
-    # Add production URL later
 ]
+# Agregar la URL del frontend en producción (Railway)
+if _frontend_url:
+    origins.append(_frontend_url)
+    # También aceptar sin trailing slash
+    origins.append(_frontend_url.rstrip("/"))
 
 app.add_middleware(
     CORSMiddleware,

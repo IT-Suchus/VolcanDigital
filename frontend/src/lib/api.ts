@@ -15,6 +15,24 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Auto-redirect to /login on expired / invalid token
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('volcan_auth_token');
+      localStorage.removeItem('volcan_auth_user');
+      localStorage.removeItem('volcan_auth_role');
+      localStorage.removeItem('volcan_auth_nombre');
+      localStorage.removeItem('volcan_admin_auth');
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export interface Plan {
   id: number;
   nombre: string;
@@ -238,9 +256,40 @@ export const fetchMetricasTecnicasRequestsPorEndpoint = async (): Promise<Metric
   return data;
 };
 
-export const loginUser = async (email: string, password: string): Promise<{ token: string; email: string; rol: string }> => {
+export const loginUser = async (email: string, password: string): Promise<{ token: string; email: string; rol: string; nombre?: string }> => {
   const { data } = await api.post('/api/auth/login', { email, password });
   return data;
+};
+
+export const registerUser = async (nombre: string, email: string, password: string): Promise<{ message: string; email: string }> => {
+  const { data } = await api.post('/api/auth/register', { nombre, email, password });
+  return data;
+};
+
+export interface Usuario {
+  id: number;
+  nombre: string | null;
+  email: string;
+  rol: string;
+  estado: string;
+  created_at: string | null;
+}
+
+export const fetchAdminUsuarios = async (): Promise<Usuario[]> => {
+  const { data } = await api.get('/api/auth/admin/usuarios');
+  return data;
+};
+
+export const updateUsuarioEstado = async (
+  usuarioId: number,
+  update: { estado?: string; rol?: string; nombre?: string }
+): Promise<Usuario> => {
+  const { data } = await api.patch(`/api/auth/admin/usuarios/${usuarioId}`, update);
+  return data;
+};
+
+export const deleteUsuario = async (usuarioId: number): Promise<void> => {
+  await api.delete(`/api/auth/admin/usuarios/${usuarioId}`);
 };
 
 export default api;

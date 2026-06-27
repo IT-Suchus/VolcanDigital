@@ -77,7 +77,10 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), nullable=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
-    rol = Column(String(50), nullable=False) # "administrador" o "desarrollador"
+    rol = Column(String(50), nullable=False, default="colaborador")  # "administrador", "desarrollador", "colaborador"
+    estado = Column(String(50), nullable=False, default="pendiente")  # "pendiente", "activo", "rechazado"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 

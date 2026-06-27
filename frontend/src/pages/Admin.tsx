@@ -10,11 +10,11 @@ import {
   fetchMetricasTecnicasResumen, fetchMetricasTecnicasTiempoRespuesta, fetchMetricasTecnicasRequestsPorEndpoint,
   ResumenMetricas, LeadsPorMes, LeadsPorEstado, LeadsPorPlan,
   MetricasTecnicasResumen, MetricasTecnicasTiempoRespuesta, MetricasTecnicasRequestsPorEndpoint,
-  loginUser
+  fetchAdminUsuarios, updateUsuarioEstado, deleteUsuario, Usuario
 } from '../lib/api';
 import { 
-  Lock, LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
-  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, User
+  LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
+  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -26,12 +26,14 @@ export default function Admin() {
   const location = useLocation();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [loggedInUser, setLoggedInUser] = useState('');
   const [loggedInRole, setLoggedInRole] = useState('');
-  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'equipo' | 'metricas'>('leads');
+  const [loggedInNombre, setLoggedInNombre] = useState('');
+  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'equipo' | 'usuarios' | 'metricas'>('leads');
+
+  // Usuarios state
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(false);
 
   // Leads state
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -76,7 +78,7 @@ export default function Admin() {
     }
   }, [location.pathname]);
 
-  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'equipo' | 'metricas') => {
+  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'equipo' | 'usuarios' | 'metricas') => {
     setActiveTab(tab);
     if (tab === 'metricas') {
       navigate('/admin/metricas');
@@ -148,8 +150,12 @@ export default function Admin() {
     const authStatus = localStorage.getItem('volcan_admin_auth');
     if (authStatus === 'true') {
       setIsAuthenticated(true);
-      setLoggedInUser(localStorage.getItem('volcan_auth_user') || 'admin');
-      setLoggedInRole(localStorage.getItem('volcan_auth_role') || 'administrador');
+      setLoggedInUser(localStorage.getItem('volcan_auth_user') || '');
+      setLoggedInRole(localStorage.getItem('volcan_auth_role') || '');
+      setLoggedInNombre(localStorage.getItem('volcan_auth_nombre') || '');
+    } else {
+      // Should be handled by RequireAuth in App.tsx, but just in case
+      navigate('/login');
     }
   }, []);
 
@@ -158,6 +164,48 @@ export default function Admin() {
       loadData();
     }
   }, [isAuthenticated, activeTab]);
+
+  // Usuarios handlers
+  const handleApproveUsuario = async (id: number) => {
+    try {
+      await updateUsuarioEstado(id, { estado: 'activo' });
+      showFeedback('Usuario aprobado correctamente');
+      setUsuarios(prev => prev.map(u => u.id === id ? { ...u, estado: 'activo' } : u));
+    } catch (err) {
+      showFeedback('Error al aprobar usuario', 'error');
+    }
+  };
+
+  const handleRejectUsuario = async (id: number) => {
+    try {
+      await updateUsuarioEstado(id, { estado: 'rechazado' });
+      showFeedback('Usuario rechazado');
+      setUsuarios(prev => prev.map(u => u.id === id ? { ...u, estado: 'rechazado' } : u));
+    } catch (err) {
+      showFeedback('Error al rechazar usuario', 'error');
+    }
+  };
+
+  const handleChangeRol = async (id: number, rol: string) => {
+    try {
+      await updateUsuarioEstado(id, { rol });
+      showFeedback('Rol actualizado');
+      setUsuarios(prev => prev.map(u => u.id === id ? { ...u, rol } : u));
+    } catch (err) {
+      showFeedback('Error al cambiar rol', 'error');
+    }
+  };
+
+  const handleDeleteUsuario = async (id: number) => {
+    if (!window.confirm('¿Seguro que deseas eliminar este usuario? Esta acción es irreversible.')) return;
+    try {
+      await deleteUsuario(id);
+      showFeedback('Usuario eliminado');
+      setUsuarios(prev => prev.filter(u => u.id !== id));
+    } catch (err: any) {
+      showFeedback(err.response?.data?.detail || 'Error al eliminar usuario', 'error');
+    }
+  };
 
   const loadData = () => {
     showFeedback('', 'success');
@@ -197,6 +245,15 @@ export default function Admin() {
           showFeedback('Error al cargar integrantes del equipo', 'error');
         })
         .finally(() => setLoadingEquipo(false));
+    } else if (activeTab === 'usuarios') {
+      setLoadingUsuarios(true);
+      fetchAdminUsuarios()
+        .then(setUsuarios)
+        .catch(err => {
+          console.error(err);
+          showFeedback('Error al cargar usuarios', 'error');
+        })
+        .finally(() => setLoadingUsuarios(false));
     } else if (activeTab === 'metricas') {
       setLoadingMetricas(true);
       Promise.all([
@@ -231,35 +288,13 @@ export default function Admin() {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoginError('');
-      const data = await loginUser(emailInput, password);
-      localStorage.setItem('volcan_auth_token', data.token);
-      localStorage.setItem('volcan_auth_user', data.email);
-      localStorage.setItem('volcan_auth_role', data.rol);
-      localStorage.setItem('volcan_admin_auth', 'true');
-      
-      setLoggedInUser(data.email);
-      setLoggedInRole(data.rol);
-      setIsAuthenticated(true);
-      setLoginError('');
-    } catch (err: any) {
-      console.error(err);
-      const errorMsg = err.response?.data?.detail || 'Email o contraseña incorrectos';
-      setLoginError(errorMsg);
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('volcan_auth_token');
     localStorage.removeItem('volcan_auth_user');
     localStorage.removeItem('volcan_auth_role');
+    localStorage.removeItem('volcan_auth_nombre');
     localStorage.removeItem('volcan_admin_auth');
-    setIsAuthenticated(false);
-    setPassword('');
-    setEmailInput('');
+    navigate('/login');
   };
 
   // Leads handlers
@@ -523,89 +558,7 @@ export default function Admin() {
   };
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-volcan-night flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Decorative background glow */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-volcan-ember rounded-full mix-blend-screen filter blur-[120px] opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-volcan-clay rounded-full mix-blend-screen filter blur-[120px] opacity-10 animate-pulse"></div>
-
-        <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-          <div className="flex justify-center text-volcan-ember">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-volcan-ember animate-bounce">
-              <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
-            </svg>
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-serif font-black text-white tracking-tight">
-            Volcán Digital
-          </h2>
-          <p className="mt-2 text-center text-sm text-volcan-cream/70">
-            Panel de Administración
-          </p>
-        </div>
-
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-          <div className="bg-volcan-taupe/15 backdrop-blur-md py-8 px-4 border border-volcan-taupe/30 shadow-2xl rounded-2xl sm:px-10">
-            <form className="space-y-6" onSubmit={handleLogin}>
-              <div>
-                <label className="block text-sm font-medium text-volcan-cream">
-                  Email de acceso
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-volcan-taupe/40">
-                    <User size={18} />
-                  </div>
-                  <input
-                    type="email"
-                    required
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-volcan-taupe/20 bg-volcan-night text-white placeholder-volcan-taupe/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-volcan-ember focus:border-volcan-ember text-sm"
-                    placeholder="ejemplo@volcandigital.com.ar"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-volcan-cream">
-                  Contraseña
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-volcan-taupe/40">
-                    <Lock size={18} />
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-volcan-taupe/20 bg-volcan-night text-white placeholder-volcan-taupe/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-volcan-ember focus:border-volcan-ember text-sm"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-
-              {loginError && (
-                <div className="rounded-xl bg-red-950/50 border border-red-800 p-3">
-                  <div className="flex">
-                    <AlertCircle className="text-red-400" size={18} />
-                    <p className="ml-3 text-sm text-red-300 font-medium">{loginError}</p>
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <button
-                  type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white btn-gradient-whatsapp btn-glow-whatsapp hover:scale-[1.02] active:scale-[0.98] transition-all"
-                >
-                  Ingresar al Panel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
+    return null; // RequireAuth in App.tsx handles redirect to /login
   }
 
   return (
@@ -687,7 +640,23 @@ export default function Admin() {
             <span>Métricas</span>
           </button>
 
+          {/* Usuarios tab — solo admins */}
+          {loggedInRole === 'administrador' && (
+            <button
+              onClick={() => handleTabChange('usuarios')}
+              className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
+                activeTab === 'usuarios'
+                  ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember'
+                  : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
+              }`}
+            >
+              <UserCog size={20} />
+              <span>Usuarios</span>
+            </button>
+          )}
+
           <div className="mt-auto px-6 py-4 text-xs text-volcan-taupe/40 border-t border-volcan-taupe/20 hidden lg:block space-y-1">
+            {loggedInNombre && <div>Nombre: <span className="text-volcan-cream/85 font-semibold">{loggedInNombre}</span></div>}
             <div>Email: <span className="text-volcan-ember font-semibold">{loggedInUser}</span></div>
             <div>Rol: <span className="text-volcan-cream/85 capitalize font-medium">{loggedInRole}</span></div>
             <div className="pt-1 text-[10px] text-volcan-taupe/30">Conectado a base de datos.</div>
@@ -1068,6 +1037,102 @@ export default function Admin() {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* -------------------- TAB: USUARIOS -------------------- */}
+          {activeTab === 'usuarios' && (
+            <div className="animate-fade-in">
+              <div className="bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm overflow-hidden">
+                {loadingUsuarios ? (
+                  <div className="py-20 text-center text-volcan-taupe">Cargando usuarios...</div>
+                ) : usuarios.length === 0 ? (
+                  <div className="py-20 text-center text-volcan-taupe">No hay usuarios registrados.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-volcan-taupe/20">
+                      <thead className="bg-volcan-cream">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Nombre</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Email</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Rol</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Estado</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-volcan-taupe uppercase tracking-wider">Registro</th>
+                          <th className="px-6 py-4 text-center text-xs font-bold text-volcan-taupe uppercase tracking-wider">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-volcan-taupe/20 bg-white text-sm">
+                        {usuarios.map((u) => (
+                          <tr key={u.id} className="hover:bg-volcan-cream/30">
+                            <td className="px-6 py-4 whitespace-nowrap font-semibold text-volcan-night">
+                              {u.nombre || <span className="text-volcan-taupe/50 italic">Sin nombre</span>}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-volcan-night/85">{u.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <select
+                                value={u.rol}
+                                onChange={(e) => handleChangeRol(u.id, e.target.value)}
+                                disabled={u.email === loggedInUser}
+                                className="border border-volcan-taupe/20 rounded-lg px-2 py-1 text-xs font-semibold bg-white text-volcan-night focus:ring-2 focus:ring-volcan-ember focus:outline-none disabled:opacity-50"
+                              >
+                                <option value="administrador">Administrador</option>
+                                <option value="desarrollador">Desarrollador</option>
+                                <option value="colaborador">Colaborador</option>
+                              </select>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
+                                u.estado === 'activo' ? 'bg-green-100 text-green-800' :
+                                u.estado === 'pendiente' ? 'bg-amber-100 text-amber-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {u.estado === 'activo' ? <CheckCircle2 size={11} /> :
+                                 u.estado === 'pendiente' ? <AlertCircle size={11} /> :
+                                 <X size={11} />}
+                                {u.estado}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-volcan-taupe/70 text-xs">
+                              {u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR') : '—'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center justify-center gap-2">
+                                {u.estado !== 'activo' && (
+                                  <button
+                                    onClick={() => handleApproveUsuario(u.id)}
+                                    title="Aprobar acceso"
+                                    className="p-2 rounded-xl bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors"
+                                  >
+                                    <ShieldCheck size={14} />
+                                  </button>
+                                )}
+                                {u.estado !== 'rechazado' && u.email !== loggedInUser && (
+                                  <button
+                                    onClick={() => handleRejectUsuario(u.id)}
+                                    title="Rechazar acceso"
+                                    className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors"
+                                  >
+                                    <ShieldX size={14} />
+                                  </button>
+                                )}
+                                {u.email !== loggedInUser && (
+                                  <button
+                                    onClick={() => handleDeleteUsuario(u.id)}
+                                    title="Eliminar usuario"
+                                    className="p-2 rounded-xl bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-colors"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

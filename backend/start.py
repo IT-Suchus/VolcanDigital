@@ -2,53 +2,69 @@ import os
 import time
 import subprocess
 import sys
-import psycopg2
 
-def wait_for_db():
-    db_url = os.getenv("DATABASE_URL", "postgresql://volcan_user:volcan_password@db:5432/volcan_db")
+try:
+    import psycopg2
+    HAS_PSYCOPG2 = True
+except ImportError:
+    HAS_PSYCOPG2 = False
+
+
+def wait_for_db(retries: int = 30, delay: float = 2.0):
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        print("ERROR: DATABASE_URL not set.")
+        sys.exit(1)
+
+    if not HAS_PSYCOPG2:
+        print("psycopg2 not available, skipping DB wait check.")
+        return
+
     print("Waiting for database connection...")
-    for i in range(30):
+    for i in range(retries):
         try:
             conn = psycopg2.connect(db_url)
             conn.close()
             print("Database is ready!")
             return
         except Exception as e:
-            print(f"Database not ready yet ({e}), retrying in 1s... ({i+1}/30)")
-            time.sleep(1)
-    print("Database connection timeout.")
+            print(f"  [{i+1}/{retries}] DB not ready: {e}")
+            time.sleep(delay)
+
+    print("ERROR: Database connection timeout after all retries.")
     sys.exit(1)
 
-def run_migrations():
-    print("Checking migrations...")
-    versions_dir = os.path.join("alembic", "versions")
-    os.makedirs(versions_dir, exist_ok=True)
-    
-    # Check if there are any migration files
-    has_migrations = any(f.endswith(".py") for f in os.listdir(versions_dir))
-    if not has_migrations:
-        print("No migrations found. Generating initial migration...")
-        result = subprocess.run(["alembic", "revision", "--autogenerate", "-m", "Init"], capture_output=False)
-        if result.returncode != 0:
-            print("Autogenerate migration failed.")
-            sys.exit(result.returncode)
 
-    print("Running migrations...")
-    result = subprocess.run(["alembic", "upgrade", "head"], capture_output=False)
+def run_migrations():
+    print("Running Alembic migrations...")
+    result = subprocess.run(
+        ["alembic", "upgrade", "head"],
+        capture_output=False,
+    )
     if result.returncode != 0:
-        print("Migrations failed.")
+        print("ERROR: Migrations failed.")
         sys.exit(result.returncode)
+    print("Migrations done.")
+
 
 def run_seed():
     print("Running seed script...")
     result = subprocess.run(["python", "seed.py"], capture_output=False)
     if result.returncode != 0:
-        print("Seed failed.")
+        print("ERROR: Seed failed.")
         sys.exit(result.returncode)
+    print("Seed done.")
+
 
 def start_server():
-    print("Starting FastAPI server...")
-    os.execvp("uvicorn", ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"])
+    # Railway injects PORT; default to 8000 for local
+    port = os.getenv("PORT", "8000")
+    print(f"Starting FastAPI server on port {port}...")
+    os.execvp(
+        "uvicorn",
+        ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", port],
+    )
+
 
 if __name__ == "__main__":
     wait_for_db()

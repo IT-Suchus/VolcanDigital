@@ -124,15 +124,28 @@ def seed_data(db: Session):
     # 4. Seed Usuarios
     if not db.query(Usuario).first():
         usuarios = [
+            # Usuario genérico inicial (eliminar una vez que crees tu propio usuario)
             Usuario(
+                nombre="Acceso Inicial",
+                email="acceso@volcandigital.com.ar",
+                hashed_password=hash_password("Volcan2026!"),
+                rol="administrador",
+                estado="activo"
+            ),
+            # Usuarios del equipo técnico
+            Usuario(
+                nombre="Admin",
                 email="admin@volcandigital.com.ar",
                 hashed_password=hash_password("volcan2026"),
-                rol="administrador"
+                rol="administrador",
+                estado="activo"
             ),
             Usuario(
+                nombre="Developer",
                 email="developer@volcandigital.com.ar",
                 hashed_password=hash_password("volcan2026"),
-                rol="desarrollador"
+                rol="desarrollador",
+                estado="activo"
             )
         ]
         db.add_all(usuarios)
