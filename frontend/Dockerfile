@@ -17,14 +17,20 @@ RUN npm run build
 # ── Production stage ──────────────────────────────────────────────────────────
 FROM nginx:alpine
 
-# Copiar build
+# gettext provee envsubst (para reemplazar $PORT en nginx.conf)
+RUN apk add --no-cache gettext
+
+# Copiar el build estático
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar el nginx.conf como template (con $PORT)
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+# Copiar nginx.conf como template (se procesa en entrypoint)
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
-# envsubst viene incluido en nginx:alpine con el paquete gettext
-# Railway inyecta PORT, nginx-entrypoint lo procesa vía templates/
-EXPOSE $PORT
+# Copiar y permisar el entrypoint
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+# Puerto default — Railway sobreescribe $PORT en runtime
+EXPOSE 80
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
