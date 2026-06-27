@@ -1,0 +1,24 @@
+# Forzar LF para scripts shell (necesario para contenedores Linux)
+*.sh text eol=lf
+
+# Archivos de texto normales → LF en Linux
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.ini text eol=lf
+Dockerfile text eol=lf
+
+# Binarios — sin conversión
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
