@@ -20,10 +20,8 @@ FROM nginx:alpine
 # Copiar el build estático
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar nginx.conf directamente (Nginx escuchará en el puerto 80)
+# Copiar nginx.conf (usa puerto 80 como placeholder, se reemplaza en CMD)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Railway detecta y routea el tráfico al puerto expuesto
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Railway asigna $PORT dinámicamente; sed lo inyecta antes de arrancar nginx
+CMD sh -c "sed -i 's/listen 80;/listen ${PORT:-80};/' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
