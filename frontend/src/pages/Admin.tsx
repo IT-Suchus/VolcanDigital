@@ -212,46 +212,66 @@ export default function Admin() {
     if (activeTab === 'leads') {
       setLoadingLeads(true);
       fetchAdminLeads()
-        .then(setLeads)
+        .then(data => {
+          if (Array.isArray(data)) setLeads(data);
+          else throw new Error("API no devolvió un array");
+        })
         .catch(err => {
           console.error(err);
-          showFeedback('Error al cargar leads', 'error');
+          showFeedback('Error al cargar leads (Revisar VITE_API_URL)', 'error');
+          setLeads([]);
         })
         .finally(() => setLoadingLeads(false));
     } else if (activeTab === 'clientes') {
       setLoadingClientes(true);
       fetchAdminClientes()
-        .then(setClientes)
+        .then(data => {
+          if (Array.isArray(data)) setClientes(data);
+          else throw new Error("API no devolvió un array");
+        })
         .catch(err => {
           console.error(err);
           showFeedback('Error al cargar clientes', 'error');
+          setClientes([]);
         })
         .finally(() => setLoadingClientes(false));
     } else if (activeTab === 'planes') {
       setLoadingPlanes(true);
       fetchPlanes()
-        .then(setPlanes)
+        .then(data => {
+          if (Array.isArray(data)) setPlanes(data);
+          else throw new Error("API no devolvió un array");
+        })
         .catch(err => {
           console.error(err);
           showFeedback('Error al cargar planes', 'error');
+          setPlanes([]);
         })
         .finally(() => setLoadingPlanes(false));
     } else if (activeTab === 'equipo') {
       setLoadingEquipo(true);
       fetchEquipo()
-        .then(setEquipo)
+        .then(data => {
+          if (Array.isArray(data)) setEquipo(data);
+          else throw new Error("API no devolvió un array");
+        })
         .catch(err => {
           console.error(err);
           showFeedback('Error al cargar integrantes del equipo', 'error');
+          setEquipo([]);
         })
         .finally(() => setLoadingEquipo(false));
     } else if (activeTab === 'usuarios') {
       setLoadingUsuarios(true);
       fetchAdminUsuarios()
-        .then(setUsuarios)
+        .then(data => {
+          if (Array.isArray(data)) setUsuarios(data);
+          else throw new Error("API no devolvió un array");
+        })
         .catch(err => {
           console.error(err);
           showFeedback('Error al cargar usuarios', 'error');
+          setUsuarios([]);
         })
         .finally(() => setLoadingUsuarios(false));
     } else if (activeTab === 'metricas') {
