@@ -9,7 +9,7 @@ from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 
-@router.get\("\), response_model=List[ClienteResponse])
+@router.get("", response_model=List[ClienteResponse])
 def get_clientes(db: Session = Depends(get_db)):
     clientes = db.query(Cliente).filter(Cliente.activo == True).order_by(Cliente.orden).all()
     return clientes
@@ -19,7 +19,7 @@ def get_clientes_admin(db: Session = Depends(get_db), current_user: dict = Depen
     # Returns all clients including inactive ones for management
     return db.query(Cliente).order_by(Cliente.orden).all()
 
-@router.post\("\), response_model=ClienteResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ClienteResponse, status_code=status.HTTP_201_CREATED)
 def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_cliente = Cliente(**cliente.model_dump())
     db.add(db_cliente)

@@ -8,11 +8,11 @@ from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/planes", tags=["Planes"])
 
-@router.get\("\), response_model=List[PlanResponse])
+@router.get("", response_model=List[PlanResponse])
 def get_planes(db: Session = Depends(get_db)):
     return db.query(Plan).order_by(Plan.orden).all()
 
-@router.post\("\), response_model=PlanResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=PlanResponse, status_code=status.HTTP_201_CREATED)
 def create_plan(plan: PlanCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_plan = Plan(**plan.model_dump())
     db.add(db_plan)
