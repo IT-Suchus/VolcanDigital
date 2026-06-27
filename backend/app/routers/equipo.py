@@ -9,11 +9,11 @@ from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/equipo", tags=["Equipo"])
 
-@router.get("/", response_model=List[IntegranteResponse])
+@router.get\("\), response_model=List[IntegranteResponse])
 def get_equipo(db: Session = Depends(get_db)):
     return db.query(Integrante).order_by(Integrante.orden).all()
 
-@router.post("/", response_model=IntegranteResponse, status_code=status.HTTP_201_CREATED)
+@router.post\("\), response_model=IntegranteResponse, status_code=status.HTTP_201_CREATED)
 def create_integrante(integrante: IntegranteCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_integrante = Integrante(**integrante.model_dump())
     db.add(db_integrante)
