@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchPlanes, Plan } from '../lib/api';
-import { Check, X, ChevronDown, ChevronUp, Flame, Zap } from 'lucide-react';
+import { Check, X, ChevronDown, ChevronUp, Flame, Zap, Globe, Workflow } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -91,7 +91,7 @@ export default function Servicios() {
                 <FadeUp key={plan.id} delay={index * 0.1}>
                   <div className={`relative bg-white rounded-3xl p-8 shadow-lg transition-transform hover:-translate-y-2 ${isDestacado ? 'border-2 border-volcan-ember shadow-volcan-ember/10 scale-105 md:z-10' : 'border border-volcan-taupe/20'}`}>
                     {isDestacado && (
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-brand text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-volcan-clay text-white px-4 py-1 rounded-full text-sm font-bold shadow-md">
                         MÁS ELEGIDO
                       </div>
                     )}
@@ -107,7 +107,7 @@ export default function Servicios() {
                             <span className="text-sm text-volcan-taupe">/mes</span>
                           </div>
                           <div className="text-xs text-volcan-ember font-medium mb-1">Promo por {plan.duracion_promo_meses} meses</div>
-                          <div className="text-sm text-volcan-taupe/65 line-through">Regular: {formatPrice(plan.precio_regular)}/mes</div>
+                          <div className="text-sm text-volcan-taupe">Desde el 3er mes: {formatPrice(plan.precio_regular)}/mes</div>
                         </>
                       ) : (
                         <div className="flex items-baseline gap-2 mb-1">
@@ -126,7 +126,7 @@ export default function Servicios() {
                       <p className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-4">Qué incluye</p>
                       {plan.incluye?.map((item, i) => (
                         <div key={i} className="flex items-start gap-3">
-                          <Check size={18} className="text-green-500 shrink-0 mt-0.5" />
+                          <Check size={18} className="text-volcan-ember shrink-0 mt-0.5" />
                           <span className="text-sm text-volcan-night/95">{item}</span>
                         </div>
                       ))}
@@ -137,7 +137,7 @@ export default function Servicios() {
                           <p className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-4">No incluye</p>
                           {plan.no_incluye.map((item, i) => (
                             <div key={i} className="flex items-start gap-3">
-                              <X size={18} className="text-red-400 shrink-0 mt-0.5" />
+                              <X size={18} className="text-volcan-clay shrink-0 mt-0.5" />
                               <span className="text-sm text-volcan-taupe/80">{item}</span>
                             </div>
                           ))}
@@ -154,9 +154,9 @@ export default function Servicios() {
 
       {/* Separator: Llama */}
       <div className="flex items-center justify-center bg-volcan-cream pt-12">
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
         <Flame className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
       </div>
 
       {/* Extra Services */}
@@ -182,10 +182,61 @@ export default function Servicios() {
 
       {/* Separator: Rayo */}
       <div className="flex items-center justify-center bg-volcan-cream pt-12">
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
         <Zap className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
       </div>
+
+      {/* También hacemos */}
+      <section className="py-20 bg-volcan-cream">
+        <div className="max-w-4xl mx-auto px-4">
+          <FadeUp>
+            <h3 className="text-3xl font-serif font-semibold text-center mb-10">También hacemos</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Sitios Web */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-volcan-taupe/20 flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-volcan-ember/10 rounded-xl flex items-center justify-center">
+                    <Globe className="text-volcan-ember" size={22} />
+                  </div>
+                  <h4 className="text-xl font-semibold text-volcan-night">Sitios web y tiendas online</h4>
+                </div>
+                <p className="text-volcan-taupe text-sm mb-6 flex-grow">
+                  Diseñamos y desarrollamos tu presencia digital desde cero: landing pages, sitios institucionales y tiendas online con foco en conversión y velocidad.
+                </p>
+                <a
+                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20un%20proyecto%20web"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-sm"
+                >
+                  Consultá tu proyecto
+                </a>
+              </div>
+              {/* Automatizaciones */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-volcan-taupe/20 flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-volcan-ember/10 rounded-xl flex items-center justify-center">
+                    <Workflow className="text-volcan-ember" size={22} />
+                  </div>
+                  <h4 className="text-xl font-semibold text-volcan-night">Automatizaciones de negocio</h4>
+                </div>
+                <p className="text-volcan-taupe text-sm mb-6 flex-grow">
+                  Conectamos tus herramientas y automatizamos procesos repetitivos: respuestas automáticas, seguimiento de leads, reportes y flujos de trabajo con n8n e inteligencia artificial.
+                </p>
+                <a
+                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20automatizaciones"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-sm"
+                >
+                  Consultá tu proyecto
+                </a>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
 
       {/* FAQ */}
       <section className="py-24 bg-volcan-cream">

@@ -65,7 +65,7 @@ export default function Nosotros() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-volcan-taupe/40 font-serif text-5xl font-bold bg-gradient-to-br from-volcan-cream to-white">
+                      <div className="absolute inset-0 flex items-center justify-center text-volcan-taupe/40 font-serif text-5xl font-bold bg-volcan-cream">
                         {miembro.nombre.charAt(0)}
                       </div>
                     )}
@@ -83,9 +83,9 @@ export default function Nosotros() {
 
       {/* Separator: Llama */}
       <div className="flex items-center justify-center bg-volcan-cream pt-12">
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-r from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
         <Flame className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-gradient-to-l from-transparent to-volcan-taupe/20"></div>
+        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
       </div>
 
       {/* Certifications */}

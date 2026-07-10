@@ -1,6 +1,7 @@
 import { Outlet, Link } from 'react-router-dom';
 import { Menu, X, MapPin, Mail, Instagram, Phone } from 'lucide-react';
 import { useState } from 'react';
+import logoVolcan from '../../media/logo-volcan-dark.png';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,11 +20,8 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="text-2xl font-serif font-bold text-volcan-ember flex items-center gap-2">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-volcan-ember">
-                <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
-              </svg>
-              Volcán
+            <Link to="/" className="flex items-center">
+              <img src={logoVolcan} alt="Volcán Digital" className="h-20 w-auto scale-110 origin-left" />
             </Link>
           </div>
           
@@ -40,7 +38,7 @@ const Header = () => {
             ))}
             <Link
               to="/contacto"
-              className="bg-gradient-brand text-white px-6 py-2.5 rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg shadow-volcan-ember/20"
+              className="bg-volcan-clay text-white px-6 py-2.5 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors shadow-lg shadow-volcan-ember/20"
             >
               Hablemos
             </Link>
@@ -75,7 +73,7 @@ const Header = () => {
             <Link
               to="/contacto"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center mt-4 bg-gradient-brand text-white px-6 py-3 rounded-xl font-medium"
+              className="block w-full text-center mt-4 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium"
             >
               Hablemos
             </Link>
@@ -92,11 +90,8 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="text-2xl font-serif font-bold text-volcan-ember flex items-center gap-2 mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
-              </svg>
-              Volcán Digital
+            <Link to="/" className="flex items-center mb-6">
+              <img src={logoVolcan} alt="Volcán Digital" className="h-20 w-auto scale-110 origin-left" />
             </Link>
             <p className="text-volcan-cream/70 text-sm">
               Agencia de marketing digital especializada en performance y resultados medibles. Menos humo, más ventas.
@@ -164,7 +159,7 @@ export default function MainLayout() {
         href="https://wa.me/5492216743529"
         target="_blank"
         rel="noreferrer"
-        className="fixed bottom-6 right-6 bg-[#349e59] text-white p-4 rounded-full shadow-xl hover:scale-110 transition-transform z-50 flex items-center justify-center border-2 border-volcan-ember shadow-lg shadow-volcan-ember/25"
+        className="fixed bottom-6 right-6 bg-volcan-clay text-white p-4 rounded-full shadow-xl hover:scale-110 transition-transform z-50 flex items-center justify-center border-2 border-volcan-ember shadow-lg shadow-volcan-ember/25"
         aria-label="Contactar por WhatsApp"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">

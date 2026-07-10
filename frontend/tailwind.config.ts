@@ -19,7 +19,7 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       backgroundImage: {
-        'gradient-brand': 'linear-gradient(135deg, #231F20 0%, #684036 55%, #D3A784 100%)',
+        // gradient-brand removed — solid colors only
       }
     },
   },

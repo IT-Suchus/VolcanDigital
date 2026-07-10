@@ -75,8 +75,8 @@ export default function Contacto() {
               <FadeUp delay={0.1}>
                 {isSuccess ? (
                   <div className="bg-white rounded-3xl p-10 text-center border border-volcan-taupe/20 shadow-sm h-full flex flex-col justify-center items-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                      <CheckCircle className="text-green-600" size={40} />
+                    <div className="w-20 h-20 bg-volcan-taupe/15 rounded-full flex items-center justify-center mb-6">
+                      <CheckCircle className="text-volcan-ember" size={40} />
                     </div>
                     <h3 className="text-3xl font-serif font-bold text-volcan-night mb-4">¡Mensaje enviado!</h3>
                     <p className="text-lg text-volcan-taupe mb-8">
@@ -98,20 +98,20 @@ export default function Contacto() {
                         <label className="block text-sm font-medium text-volcan-night mb-2">Nombre completo *</label>
                         <input
                           {...register('nombre', { required: 'El nombre es obligatorio', minLength: { value: 2, message: 'Mínimo 2 caracteres' } })}
-                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.nombre ? 'border-red-500' : 'border-volcan-taupe/20'}`}
+                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.nombre ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                           placeholder="Juan Pérez"
                         />
-                        {errors.nombre && <p className="mt-1 text-sm text-red-500">{errors.nombre.message}</p>}
+                        {errors.nombre && <p className="mt-1 text-sm text-volcan-clay">{errors.nombre.message}</p>}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-volcan-night mb-2">Email *</label>
                         <input
                           type="email"
                           {...register('email', { required: 'El email es obligatorio', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } })}
-                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.email ? 'border-red-500' : 'border-volcan-taupe/20'}`}
+                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.email ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                           placeholder="juan@empresa.com"
                         />
-                        {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+                        {errors.email && <p className="mt-1 text-sm text-volcan-clay">{errors.email.message}</p>}
                       </div>
                     </div>
 
@@ -152,16 +152,16 @@ export default function Contacto() {
                       <textarea
                         rows={4}
                         {...register('mensaje', { required: 'Por favor, dejanos un mensaje', minLength: { value: 10, message: 'Contanos un poco más sobre tu necesidad' } })}
-                        className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors resize-none ${errors.mensaje ? 'border-red-500' : 'border-volcan-taupe/20'}`}
+                        className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors resize-none ${errors.mensaje ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                         placeholder="Contanos cuáles son tus objetivos, cuánto estás facturando aprox, o si ya haces publicidad..."
                       ></textarea>
-                      {errors.mensaje && <p className="mt-1 text-sm text-red-500">{errors.mensaje.message}</p>}
+                      {errors.mensaje && <p className="mt-1 text-sm text-volcan-clay">{errors.mensaje.message}</p>}
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-brand text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-volcan-ember/20"
+                      className="w-full bg-volcan-clay text-white font-bold py-4 rounded-xl hover:bg-volcan-ember hover:text-volcan-night transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-volcan-ember/20"
                     >
                       {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
                     </button>
