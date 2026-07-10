@@ -62,23 +62,23 @@ export default function Home() {
       {/* Impact Numbers */}
       <section className="bg-volcan-cream py-20 border-y border-volcan-taupe/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center overflow-hidden">
             <FadeUp delay={0.1}>
-              <div className="p-6 flex flex-col items-center justify-center">
+              <div className="p-4 sm:p-6 flex flex-col items-center justify-center min-w-0">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-bold text-volcan-ember leading-none mb-3">+10</div>
-                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Clientes activos</div>
+                <div className="text-volcan-night font-semibold text-xs sm:text-sm md:text-base tracking-wider uppercase">Clientes activos</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <div className="p-6 flex flex-col items-center justify-center">
+              <div className="p-4 sm:p-6 flex flex-col items-center justify-center min-w-0">
                 <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-bold text-volcan-ember leading-none mb-3">+2</div>
-                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Años de experiencia</div>
+                <div className="text-volcan-night font-semibold text-xs sm:text-sm md:text-base tracking-wider uppercase">Años de experiencia</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="p-6 flex flex-col items-center justify-center">
-                <div className="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif font-bold text-volcan-ember leading-none mb-3">ARG/BR</div>
-                <div className="text-volcan-night font-semibold text-sm sm:text-base tracking-wider uppercase">Presencia Internacional</div>
+              <div className="p-4 sm:p-6 flex flex-col items-center justify-center min-w-0">
+                <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-volcan-ember leading-none mb-3 break-words overflow-wrap-normal">ARG · BR</div>
+                <div className="text-volcan-night font-semibold text-xs sm:text-sm md:text-base tracking-wider uppercase">Presencia Internacional</div>
               </div>
             </FadeUp>
           </div>
@@ -86,7 +86,7 @@ export default function Home() {
       </section>
 
       {/* Meta Ads Section */}
-      <section className="bg-volcan-night text-volcan-cream py-24">
+      <section className="bg-volcan-night text-volcan-cream py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
