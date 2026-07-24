@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchClientes, Cliente } from '../lib/api';
-import { Target, TrendingUp, Users, MonitorSmartphone, Flame, Zap, Quote, Heart, MessageCircle, Send } from 'lucide-react';
+import { Target, TrendingUp, Users, MonitorSmartphone, Heart, MessageCircle, Send } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -28,34 +28,70 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-volcan-night relative overflow-hidden py-24 sm:py-32 lg:py-40">
-        {/* Decorative background icons */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-          <Flame className="absolute -top-10 left-10 text-volcan-ember/5 w-32 h-32 rotate-12" />
-          <Zap className="absolute top-1/2 -right-12 text-volcan-taupe/5 w-48 h-48 -rotate-12" />
-          <Quote className="absolute -bottom-16 left-1/4 text-volcan-ember/5 w-40 h-40 rotate-45" />
+      <section className="bg-volcan-night relative overflow-hidden min-h-screen flex flex-col justify-center py-20">
+        {/* Íconos decorativos de fondo */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 opacity-[0.04]" aria-hidden="true">
+          <Target className="absolute top-16 right-[10%] w-72 h-72 text-white" />
+          <TrendingUp className="absolute bottom-12 right-[25%] w-96 h-96 text-white" />
+          <MonitorSmartphone className="absolute top-1/3 left-[-5%] w-80 h-80 text-white" />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <FadeUp>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-semibold text-white tracking-[0.02em] mb-6">
-              Publicidad digital para negocios que quieren <span className="text-volcan-ember">vender más</span>
-            </h1>
-          </FadeUp>
-          <FadeUp delay={0.2}>
-            <p className="mt-6 text-xl text-volcan-cream/90 max-w-2xl mx-auto mb-10">
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="max-w-3xl text-left">
+            {/* Badge pill */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-block px-3 py-1 rounded-full border border-volcan-ember/30 text-volcan-ember/60 text-[10px] uppercase tracking-widest bg-transparent mb-6"
+            >
+              PERFORMANCE · META ADS · GOOGLE ADS
+            </motion.div>
+
+            {/* Título */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-5xl font-bold leading-tight text-white mb-6"
+            >
+              Publicidad digital para negocios que quieren{' '}
+              <span style={{ color: '#D3A784' }}>vender más</span>
+            </motion.h1>
+
+            {/* Subtítulo */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-base font-light text-white/60 max-w-lg mb-8 md:mb-10 leading-relaxed"
+            >
               Ayudamos a tu negocio en cada etapa de crecimiento. Menos humo, más resultados medibles.
-            </p>
-          </FadeUp>
-          <FadeUp delay={0.4}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="https://wa.me/5492216743529" className="bg-volcan-clay text-white px-8 py-4 rounded-xl font-bold hover:bg-volcan-ember hover:text-volcan-night transition-all duration-300 text-lg">
+            </motion.p>
+
+            {/* Botones en fila, gap-6 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-6"
+            >
+              <a
+                href="https://wa.me/5492216743529"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-[#684036] text-white rounded-full px-6 py-3 text-sm font-medium hover:bg-[#58352d] transition-colors shadow-lg inline-flex items-center justify-center"
+              >
                 Hablar por WhatsApp
               </a>
-              <Link to="/servicios" className="bg-transparent border border-volcan-ember text-volcan-ember px-8 py-4 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-lg">
-                Ver servicios
+              <Link
+                to="/servicios"
+                className="bg-transparent border-0 text-white/60 text-sm font-medium hover:text-white/90 transition-colors inline-flex items-center gap-1"
+              >
+                Ver servicios →
               </Link>
-            </div>
-          </FadeUp>
+            </motion.div>
+          </div>
         </div>
       </section>
 
