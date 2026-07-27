@@ -96,7 +96,7 @@ export default function Servicios() {
                       </div>
                     )}
                     
-                    <h3 className="text-2xl font-serif font-bold mb-2">{plan.nombre}</h3>
+                    <h3 className="text-2xl font-serif font-bold text-volcan-night mb-2">{plan.nombre}</h3>
                     <p className="text-sm text-volcan-taupe mb-6 min-h-[40px]">{plan.descripcion}</p>
                     
                     <div className="mb-8">
