@@ -4,11 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-volcan-cream text-volcan-night font-sans antialiased;
+    @apply bg-volcan-night text-volcan-cream font-sans antialiased;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-volcan-night;
+    @apply font-serif text-white;
   }
 }
 

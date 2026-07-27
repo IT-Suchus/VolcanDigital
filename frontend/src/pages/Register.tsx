@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../lib/api';
-import { Flame, Eye, EyeOff, AlertCircle, CheckCircle2, Loader2, Check, X } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, CheckCircle2, Loader2, Check, X } from 'lucide-react';
+import logoVolcan from '../media/logo-volcan-dark.png';
 
 interface PasswordRule {
   label: string;
@@ -95,15 +96,21 @@ export default function Register() {
       <div style={{ ...styles.orb, ...styles.orb3 }} />
 
       <div style={styles.card}>
-        {/* Brand */}
-        <div style={styles.brandRow}>
-          <div style={styles.logoCircle}>
-            <Flame size={28} color="#ff6b2b" />
-          </div>
-          <div>
-            <div style={styles.brandName}>Volcán Digital</div>
-            <div style={styles.brandSub}>Solicitar acceso</div>
-          </div>
+        {/* Centered Large Logo Header */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <Link to="/" style={{ display: 'inline-block', transition: 'transform 0.3s ease' }}>
+            <img 
+              src={logoVolcan} 
+              alt="Volcán Digital" 
+              style={{ 
+                height: '100px', 
+                width: 'auto', 
+                maxWidth: '100%',
+                margin: '0 auto', 
+                filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.5))' 
+              }} 
+            />
+          </Link>
         </div>
 
         <h1 style={styles.title}>Crear cuenta</h1>
@@ -116,7 +123,7 @@ export default function Register() {
 
         {/* Info banner */}
         <div style={styles.infoBanner}>
-          <AlertCircle size={15} style={{ flexShrink: 0, color: '#fbbf24' }} />
+          <AlertCircle size={15} style={{ flexShrink: 0, color: '#D3A784' }} />
           <span>
             Tu cuenta quedará <strong>pendiente de aprobación</strong>. Un administrador debe
             habilitarla antes de que puedas ingresar.
@@ -209,7 +216,7 @@ export default function Register() {
             )}
           </div>
 
-          {/* Confirm password */}
+          {/* Confirm Password */}
           <div style={styles.fieldGroup}>
             <label style={styles.label} htmlFor="reg-confirm">
               Confirmar contraseña
@@ -221,16 +228,7 @@ export default function Register() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repetí tu contraseña"
-                style={{
-                  ...styles.input,
-                  paddingRight: '48px',
-                  borderColor:
-                    confirmPassword && confirmPassword !== password
-                      ? 'rgba(239,68,68,0.5)'
-                      : confirmPassword && confirmPassword === password
-                      ? 'rgba(34,197,94,0.5)'
-                      : undefined,
-                }}
+                style={{ ...styles.input, paddingRight: '48px' }}
                 disabled={loading}
                 autoComplete="new-password"
               />
@@ -245,7 +243,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Error */}
+          {/* Error message */}
           {error && (
             <div style={{ ...styles.alert, ...styles.alertError }}>
               <AlertCircle size={16} style={{ flexShrink: 0 }} />
@@ -262,7 +260,7 @@ export default function Register() {
             {loading ? (
               <>
                 <Loader2 size={18} style={styles.spinner} />
-                Creando cuenta…
+                Registrando…
               </>
             ) : (
               'Solicitar acceso'
@@ -283,110 +281,86 @@ export default function Register() {
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #0d0d0f 0%, #111317 50%, #0a0c10 100%)',
+    background: 'radial-gradient(circle at 50% 30%, #1c1819 0%, #121011 100%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     padding: '24px',
-    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
     position: 'relative',
     overflow: 'hidden',
   },
   orb: {
     position: 'absolute',
     borderRadius: '50%',
-    filter: 'blur(80px)',
-    opacity: 0.15,
+    filter: 'blur(100px)',
+    opacity: 0.25,
     pointerEvents: 'none',
   },
   orb1: {
-    width: '500px',
-    height: '500px',
-    background: 'radial-gradient(circle, #ff6b2b, transparent)',
-    top: '-150px',
-    right: '-100px',
+    width: '550px',
+    height: '550px',
+    background: 'radial-gradient(circle, #D3A784, transparent)',
+    top: '-180px',
+    right: '-120px',
   },
   orb2: {
-    width: '400px',
-    height: '400px',
-    background: 'radial-gradient(circle, #ff3860, transparent)',
-    bottom: '-100px',
-    left: '-80px',
+    width: '450px',
+    height: '450px',
+    background: 'radial-gradient(circle, #684036, transparent)',
+    bottom: '-120px',
+    left: '-100px',
   },
   orb3: {
-    width: '300px',
-    height: '300px',
-    background: 'radial-gradient(circle, #7c3aed, transparent)',
+    width: '350px',
+    height: '350px',
+    background: 'radial-gradient(circle, rgba(211,167,132,0.4), transparent)',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
   },
   card: {
-    background: 'rgba(255,255,255,0.04)',
-    backdropFilter: 'blur(24px)',
-    WebkitBackdropFilter: 'blur(24px)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '20px',
+    background: 'rgba(26, 23, 24, 0.85)',
+    backdropFilter: 'blur(28px)',
+    WebkitBackdropFilter: 'blur(28px)',
+    border: '1px solid rgba(211, 167, 132, 0.2)',
+    borderRadius: '24px',
     padding: '48px 40px',
     width: '100%',
-    maxWidth: '440px',
-    boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+    maxWidth: '460px',
+    boxShadow: '0 32px 80px rgba(0,0,0,0.65), 0 0 30px rgba(211,167,132,0.06)',
     position: 'relative',
     zIndex: 1,
-  },
-  brandRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '14px',
-    marginBottom: '32px',
-  },
-  logoCircle: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
-    background: 'rgba(255,107,43,0.15)',
-    border: '1px solid rgba(255,107,43,0.3)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  brandName: {
-    fontSize: '18px',
-    fontWeight: 700,
-    color: '#fff',
-    letterSpacing: '-0.3px',
-  },
-  brandSub: {
-    fontSize: '12px',
-    color: 'rgba(255,255,255,0.4)',
-    marginTop: '2px',
   },
   title: {
     fontSize: '26px',
     fontWeight: 700,
-    color: '#fff',
-    margin: '0 0 8px',
-    letterSpacing: '-0.5px',
+    color: '#ffffff',
+    margin: '0 0 6px',
+    letterSpacing: '-0.4px',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: '14px',
-    color: 'rgba(255,255,255,0.45)',
+    color: 'rgba(255,255,255,0.6)',
     margin: '0 0 20px',
+    textAlign: 'center',
   },
   link: {
-    color: '#ff6b2b',
+    color: '#D3A784',
     textDecoration: 'none',
-    fontWeight: 500,
+    fontWeight: 600,
+    transition: 'color 0.2s',
   },
   infoBanner: {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '10px',
     padding: '12px 14px',
-    borderRadius: '10px',
-    background: 'rgba(251,191,36,0.08)',
-    border: '1px solid rgba(251,191,36,0.2)',
-    color: 'rgba(253,230,138,0.85)',
+    borderRadius: '12px',
+    background: 'rgba(211, 167, 132, 0.08)',
+    border: '1px solid rgba(211, 167, 132, 0.2)',
+    color: '#D3A784',
     fontSize: '13px',
     lineHeight: '1.5',
     marginBottom: '24px',
@@ -404,19 +378,19 @@ const styles: Record<string, React.CSSProperties> = {
   label: {
     fontSize: '13px',
     fontWeight: 500,
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.75)',
     letterSpacing: '0.2px',
   },
   input: {
     width: '100%',
-    padding: '13px 16px',
-    background: 'rgba(255,255,255,0.06)',
+    padding: '14px 18px',
+    background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.12)',
-    borderRadius: '10px',
+    borderRadius: '12px',
     color: '#fff',
     fontSize: '15px',
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'all 0.2s ease',
     boxSizing: 'border-box',
   },
   passwordWrapper: {
@@ -430,7 +404,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    color: 'rgba(255,255,255,0.4)',
+    color: 'rgba(255,255,255,0.45)',
     padding: '4px',
     display: 'flex',
     alignItems: 'center',
@@ -458,7 +432,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'flex-start',
     gap: '10px',
     padding: '12px 14px',
-    borderRadius: '10px',
+    borderRadius: '12px',
     fontSize: '13px',
     lineHeight: '1.5',
   },
@@ -468,11 +442,11 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fca5a5',
   },
   submitBtn: {
-    padding: '14px',
-    background: 'linear-gradient(135deg, #ff6b2b 0%, #ff3860 100%)',
-    border: 'none',
-    borderRadius: '10px',
-    color: '#fff',
+    padding: '15px',
+    background: 'linear-gradient(135deg, #684036 0%, #D3A784 100%)',
+    border: '1px solid rgba(211, 167, 132, 0.4)',
+    borderRadius: '12px',
+    color: '#ffffff',
     fontSize: '15px',
     fontWeight: 600,
     cursor: 'pointer',
@@ -480,13 +454,15 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    transition: 'opacity 0.2s',
-    marginTop: '4px',
-    letterSpacing: '0.2px',
+    transition: 'all 0.3s ease',
+    marginTop: '6px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 6px 20px rgba(104, 64, 54, 0.4)',
   },
   submitBtnDisabled: {
     opacity: 0.6,
     cursor: 'not-allowed',
+    boxShadow: 'none',
   },
   spinner: {
     animation: 'spin 1s linear infinite',
@@ -506,19 +482,21 @@ const styles: Record<string, React.CSSProperties> = {
   backBtn: {
     display: 'block',
     textAlign: 'center' as const,
-    padding: '13px',
-    background: 'linear-gradient(135deg, #ff6b2b 0%, #ff3860 100%)',
-    borderRadius: '10px',
-    color: '#fff',
+    padding: '14px',
+    background: 'linear-gradient(135deg, #684036 0%, #D3A784 100%)',
+    border: '1px solid rgba(211, 167, 132, 0.4)',
+    borderRadius: '12px',
+    color: '#ffffff',
     fontWeight: 600,
     fontSize: '15px',
     textDecoration: 'none',
-    letterSpacing: '0.2px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 6px 20px rgba(104, 64, 54, 0.4)',
   },
   footer: {
     textAlign: 'center' as const,
     fontSize: '11px',
-    color: 'rgba(255,255,255,0.2)',
+    color: 'rgba(255,255,255,0.3)',
     marginTop: '32px',
     marginBottom: 0,
   },

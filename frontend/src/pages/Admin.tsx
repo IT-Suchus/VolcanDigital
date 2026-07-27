@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import logoVolcan from '../media/logo-volcan-dark.png';
 import { 
   fetchAdminLeads, updateLeadStatus, Lead,
   fetchAdminClientes, createCliente, updateCliente, deleteCliente, Cliente,
@@ -584,12 +585,11 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-volcan-cream flex flex-col font-sans text-volcan-night">
       {/* Admin Navbar */}
-      <nav className="bg-volcan-night text-white border-b border-volcan-taupe/20 px-6 py-4 flex justify-between items-center shadow-md">
+      <nav className="bg-volcan-night text-white border-b border-volcan-taupe/20 px-6 py-3.5 flex justify-between items-center shadow-md">
         <div className="flex items-center gap-3">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-volcan-ember">
-            <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
-          </svg>
-          <span className="font-serif font-black text-xl tracking-tight text-white">Volcán Digital</span>
+          <Link to="/" title="Volver al sitio principal" className="flex items-center transition-transform hover:scale-105">
+            <img src={logoVolcan} alt="Volcán Digital" className="h-10 md:h-12 w-auto object-contain" />
+          </Link>
           <span className="bg-volcan-ember/25 text-volcan-ember border border-volcan-ember/40 text-xs px-2.5 py-0.5 rounded-full font-bold ml-2 uppercase tracking-wider">Admin</span>
         </div>
         <button

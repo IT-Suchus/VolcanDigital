@@ -16,12 +16,16 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed w-full z-50 bg-volcan-night/95 backdrop-blur-sm" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+    <header className="fixed top-0 left-0 w-full z-50 bg-[#161314]/95 backdrop-blur-md transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-5 md:py-6">
+        <div className="flex justify-between items-center py-3 md:py-4">
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="flex items-center">
-              <img src={logoVolcan} alt="Volcán Digital" className="h-12 md:h-14 w-auto origin-left" />
+            <Link to="/" className="flex items-center group">
+              <img 
+                src={logoVolcan} 
+                alt="Volcán Digital" 
+                className="h-14 md:h-16 w-auto origin-left transition-transform duration-300 group-hover:scale-105" 
+              />
             </Link>
           </div>
           
@@ -31,17 +35,19 @@ const Header = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className="text-white/50 hover:text-white/80 transition-colors text-[11px] uppercase tracking-[0.2em] font-normal"
+                className="text-white/70 hover:text-volcan-ember transition-colors text-xs uppercase tracking-[0.2em] font-medium py-1 relative group"
               >
                 {link.name}
+                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-volcan-ember transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
             <Link
               to="/contacto"
-              className="px-5 py-2 rounded-full font-normal text-xs tracking-wide transition-all duration-300 hover:bg-volcan-ember/10 ml-2"
+              className="px-6 py-2.5 rounded-full font-medium text-xs tracking-wider transition-all duration-300 hover:bg-volcan-ember hover:text-volcan-night hover:shadow-[0_0_20px_rgba(211,167,132,0.4)] ml-2"
               style={{
                 color: '#D3A784',
-                border: '1px solid rgba(211,167,132,0.35)',
+                border: '1px solid rgba(211,167,132,0.4)',
+                backgroundColor: 'rgba(211,167,132,0.05)',
               }}
             >
               Hablemos
@@ -52,25 +58,28 @@ const Header = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="text-volcan-cream hover:text-white focus:outline-none"
+              className="text-volcan-cream hover:text-volcan-ember focus:outline-none p-2"
               aria-label="Abrir menú"
             >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
+              {isOpen ? <X size={30} /> : <Menu size={30} />}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Linea inferior con brillo sutil */}
+      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-volcan-ember/30 to-transparent" />
+
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden bg-volcan-night border-b border-white/[0.05]">
-          <div className="px-4 pt-3 pb-5 space-y-3">
+        <div className="md:hidden bg-[#161314] border-b border-volcan-ember/20 shadow-2xl">
+          <div className="px-6 pt-4 pb-6 space-y-4">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className="block text-[11px] uppercase tracking-[0.2em] font-normal text-white/50 hover:text-white/80 transition-colors py-2"
+                className="block text-xs uppercase tracking-[0.2em] font-medium text-white/70 hover:text-volcan-ember transition-colors py-2 border-b border-white/5"
               >
                 {link.name}
               </Link>
@@ -78,10 +87,11 @@ const Header = () => {
             <Link
               to="/contacto"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center mt-4 px-6 py-3 rounded-full font-normal text-sm tracking-wide transition-all duration-300"
+              className="block w-full text-center mt-6 px-6 py-3 rounded-full font-medium text-sm tracking-wider transition-all duration-300 hover:bg-volcan-ember hover:text-volcan-night"
               style={{
                 color: '#D3A784',
-                border: '1px solid rgba(211,167,132,0.35)',
+                border: '1px solid rgba(211,167,132,0.4)',
+                backgroundColor: 'rgba(211,167,132,0.08)',
               }}
             >
               Hablemos
@@ -156,9 +166,9 @@ const Footer = () => {
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-volcan-cream text-volcan-night">
+    <div className="min-h-screen flex flex-col font-sans bg-volcan-night text-volcan-cream">
       <Header />
-      <main className="flex-grow pt-20">
+      <main className="flex-grow pt-20 md:pt-24">
         <Outlet />
       </main>
       <Footer />
