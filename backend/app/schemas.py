@@ -56,6 +56,7 @@ class ClienteResponse(ClienteCreate):
 # Planes
 class PlanCreate(BaseModel):
     nombre: str
+    tiene_promo: bool = False
     precio_promo: Optional[int] = None
     precio_regular: Optional[int] = None
     duracion_promo_meses: Optional[int] = None
@@ -66,6 +67,7 @@ class PlanCreate(BaseModel):
 
 class PlanUpdate(BaseModel):
     nombre: Optional[str] = None
+    tiene_promo: Optional[bool] = None
     precio_promo: Optional[int] = None
     precio_regular: Optional[int] = None
     duracion_promo_meses: Optional[int] = None

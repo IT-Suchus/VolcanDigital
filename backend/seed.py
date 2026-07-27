@@ -10,6 +10,7 @@ def seed_data(db: Session):
         planes = [
             Plan(
                 nombre="Impulso",
+                tiene_promo=True,
                 precio_promo=200000,
                 precio_regular=300000,
                 duracion_promo_meses=2,
@@ -36,6 +37,7 @@ def seed_data(db: Session):
             ),
             Plan(
                 nombre="Performance",
+                tiene_promo=True,
                 precio_promo=400000,
                 precio_regular=600000,
                 duracion_promo_meses=2,
@@ -63,6 +65,7 @@ def seed_data(db: Session):
             ),
             Plan(
                 nombre="Growth",
+                tiene_promo=False,
                 precio_promo=800000,
                 precio_regular=800000, # Desde 800k
                 duracion_promo_meses=0,

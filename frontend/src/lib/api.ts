@@ -36,6 +36,7 @@ api.interceptors.response.use(
 export interface Plan {
   id: number;
   nombre: string;
+  tiene_promo: boolean;
   precio_promo: number | null;
   precio_regular: number | null;
   duracion_promo_meses: number | null;

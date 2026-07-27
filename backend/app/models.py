@@ -41,6 +41,7 @@ class Plan(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(255), nullable=False)
+    tiene_promo = Column(Boolean, default=False, nullable=True)
     precio_promo = Column(Integer, nullable=True) # Precio en ARS, mejor Integer para simplificar si no hay decimales
     precio_regular = Column(Integer, nullable=True)
     duracion_promo_meses = Column(Integer, nullable=True)

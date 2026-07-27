@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../lib/api';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
-import logoVolcan from '../media/logo-volcan-dark.png';
+import BrandLogo from '../components/common/BrandLogo';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -59,21 +59,9 @@ export default function Login() {
       <div style={{ ...styles.orb, ...styles.orb3 }} />
 
       <div style={styles.card}>
-        {/* Centered Large Logo Header */}
+        {/* Centered Vector Brand Logo Header */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <Link to="/" style={{ display: 'inline-block', transition: 'transform 0.3s ease' }}>
-            <img 
-              src={logoVolcan} 
-              alt="Volcán Digital" 
-              style={{ 
-                height: '100px', 
-                width: 'auto', 
-                maxWidth: '100%',
-                margin: '0 auto', 
-                filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.5))' 
-              }} 
-            />
-          </Link>
+          <BrandLogo layout="vertical" iconSize="lg" />
         </div>
 
         <h1 style={styles.title}>Iniciar sesión</h1>

@@ -23,7 +23,7 @@ const Accordion = ({ question, answer }: { question: string, answer: string }) =
         className="w-full py-6 flex justify-between items-center text-left focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="font-serif font-semibold text-lg">{question}</span>
+        <span className="font-serif font-semibold text-lg text-volcan-night">{question}</span>
         {isOpen ? <ChevronUp className="text-volcan-ember" /> : <ChevronDown className="text-volcan-ember" />}
       </button>
       <motion.div
@@ -100,14 +100,16 @@ export default function Servicios() {
                     <p className="text-sm text-volcan-taupe mb-6 min-h-[40px]">{plan.descripcion}</p>
                     
                     <div className="mb-8">
-                      {plan.precio_promo && plan.precio_regular ? (
+                      {plan.tiene_promo ? (
                         <>
                           <div className="flex items-baseline gap-2 mb-1">
-                            <span className="text-4xl font-bold text-volcan-night">{formatPrice(plan.precio_promo)}</span>
+                            <span className="text-4xl font-bold text-volcan-night">{formatPrice(plan.precio_promo || 0)}</span>
                             <span className="text-sm text-volcan-taupe">/mes</span>
                           </div>
                           <div className="text-xs text-volcan-ember font-medium mb-1">Promo por {plan.duracion_promo_meses} meses</div>
-                          <div className="text-sm text-volcan-taupe">Desde el 3er mes: {formatPrice(plan.precio_regular)}/mes</div>
+                          <div className="text-sm text-volcan-taupe">
+                            Desde el {((plan.duracion_promo_meses || 0) + 1) === 3 ? '3er' : ((plan.duracion_promo_meses || 0) + 1) === 2 ? '2do' : `${(plan.duracion_promo_meses || 0) + 1}º`} mes: {formatPrice(plan.precio_regular || 0)}/mes
+                          </div>
                         </>
                       ) : (
                         <div className="flex items-baseline gap-2 mb-1">
@@ -163,17 +165,35 @@ export default function Servicios() {
       <section className="py-20 bg-volcan-cream">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeUp>
-            <h3 className="text-3xl font-serif font-bold mb-10">Servicios Adicionales de Contenido</h3>
+            <h3 className="text-3xl font-serif font-bold text-volcan-night mb-10">Servicios Adicionales de Contenido</h3>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20">
-                <h4 className="text-xl font-bold text-volcan-night mb-2">Filmaker</h4>
-                <p className="text-volcan-taupe text-sm mb-4">Grabación presencial (La Plata/CABA) y edición de 4 videos optimizados para pauta.</p>
-                <div className="text-2xl font-bold text-volcan-ember">$180.000</div>
+              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xl font-bold text-volcan-night mb-2">Filmaker</h4>
+                  <p className="text-volcan-taupe text-sm mb-6">Grabación presencial (La Plata/CABA) y edición de 4 videos optimizados para pauta.</p>
+                </div>
+                <a
+                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20el%20servicio%20de%20Filmaker"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-sm w-full"
+                >
+                  Consultar por WhatsApp
+                </a>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20">
-                <h4 className="text-xl font-bold text-volcan-night mb-2">Edición de Video</h4>
-                <p className="text-volcan-taupe text-sm mb-4">Edición dinámica de 4 videos utilizando el material crudo enviado por vos.</p>
-                <div className="text-2xl font-bold text-volcan-ember">$100.000</div>
+              <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xl font-bold text-volcan-night mb-2">Edición de Video</h4>
+                  <p className="text-volcan-taupe text-sm mb-6">Edición dinámica de 4 videos utilizando el material crudo enviado por vos.</p>
+                </div>
+                <a
+                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20el%20servicio%20de%20Edici%C3%B3n%20de%20Video"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-sm w-full"
+                >
+                  Consultar por WhatsApp
+                </a>
               </div>
             </div>
           </FadeUp>
@@ -191,7 +211,7 @@ export default function Servicios() {
       <section className="py-20 bg-volcan-cream">
         <div className="max-w-4xl mx-auto px-4">
           <FadeUp>
-            <h3 className="text-3xl font-serif font-semibold text-center mb-10">También hacemos</h3>
+            <h3 className="text-3xl font-serif font-semibold text-volcan-night text-center mb-10">También hacemos</h3>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Sitios Web */}
               <div className="bg-white p-8 rounded-2xl shadow-sm border border-volcan-taupe/20 flex flex-col">
@@ -242,7 +262,7 @@ export default function Servicios() {
       <section className="py-24 bg-volcan-cream">
         <div className="max-w-3xl mx-auto px-4">
           <FadeUp>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-center mb-12">Preguntas Frecuentes</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-volcan-night text-center mb-12">Preguntas Frecuentes</h2>
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-volcan-taupe/20">
               {faqs.map((faq, i) => (
                 <Accordion key={i} question={faq.question} answer={faq.answer} />

@@ -221,7 +221,7 @@ export default function Home() {
       <section className="bg-volcan-cream text-volcan-night py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
           <FadeUp>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6">Medimos y usamos datos</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night mb-6">Medimos y usamos datos</h2>
             <p className="text-lg mb-12">
               No tomamos decisiones basadas en suposiciones. Implementamos analítica avanzada para saber exactamente qué funciona y escalar tu facturación.
             </p>

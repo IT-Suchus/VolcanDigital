@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import logoVolcan from '../media/logo-volcan-dark.png';
+import { useNavigate, useLocation } from 'react-router-dom';
+import BrandLogo from '../components/common/BrandLogo';
 import { 
   fetchAdminLeads, updateLeadStatus, Lead,
   fetchAdminClientes, createCliente, updateCliente, deleteCliente, Cliente,
@@ -95,6 +95,7 @@ export default function Admin() {
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [planForm, setPlanForm] = useState({
     nombre: '',
+    tiene_promo: false,
     precio_promo: 0,
     precio_regular: 0,
     duracion_promo_meses: 0,
@@ -432,6 +433,7 @@ export default function Admin() {
     setEditingPlan(null);
     setPlanForm({
       nombre: '',
+      tiene_promo: false,
       precio_promo: 0,
       precio_regular: 0,
       duracion_promo_meses: 0,
@@ -447,6 +449,7 @@ export default function Admin() {
     setEditingPlan(p);
     setPlanForm({
       nombre: p.nombre,
+      tiene_promo: p.tiene_promo || false,
       precio_promo: p.precio_promo || 0,
       precio_regular: p.precio_regular || 0,
       duracion_promo_meses: p.duracion_promo_meses || 0,
@@ -465,9 +468,10 @@ export default function Admin() {
     
     const payload = {
       nombre: planForm.nombre,
-      precio_promo: planForm.precio_promo || null,
+      tiene_promo: planForm.tiene_promo,
+      precio_promo: planForm.tiene_promo ? (planForm.precio_promo || null) : null,
       precio_regular: planForm.precio_regular || null,
-      duracion_promo_meses: planForm.duracion_promo_meses || null,
+      duracion_promo_meses: planForm.tiene_promo ? (planForm.duracion_promo_meses || null) : null,
       descripcion: planForm.descripcion || null,
       incluye: incluye.length ? incluye : null,
       no_incluye: no_incluye.length ? no_incluye : null,
@@ -587,9 +591,7 @@ export default function Admin() {
       {/* Admin Navbar */}
       <nav className="bg-volcan-night text-white border-b border-volcan-taupe/20 px-6 py-3.5 flex justify-between items-center shadow-md">
         <div className="flex items-center gap-3">
-          <Link to="/" title="Volver al sitio principal" className="flex items-center transition-transform hover:scale-105">
-            <img src={logoVolcan} alt="Volcán Digital" className="h-10 md:h-12 w-auto object-contain" />
-          </Link>
+          <BrandLogo iconSize="sm" />
           <span className="bg-volcan-ember/25 text-volcan-ember border border-volcan-ember/40 text-xs px-2.5 py-0.5 rounded-full font-bold ml-2 uppercase tracking-wider">Admin</span>
         </div>
         <button
@@ -930,16 +932,20 @@ export default function Admin() {
                             <span className="block font-semibold text-volcan-taupe">Regular:</span>
                             <span className="font-bold text-sm text-volcan-night">{p.precio_regular ? `$${p.precio_regular.toLocaleString()}` : '-'}</span>
                           </div>
-                          <div>
-                            <span className="block font-semibold text-volcan-taupe">Promo:</span>
-                            <span className="font-bold text-sm text-volcan-ember">{p.precio_promo ? `$${p.precio_promo.toLocaleString()}` : '-'}</span>
-                          </div>
-                          {p.duracion_promo_meses ? (
-                            <div>
-                              <span className="block font-semibold text-volcan-taupe">Duración:</span>
-                              <span className="font-bold text-sm text-volcan-night">{p.duracion_promo_meses} meses</span>
-                            </div>
-                          ) : null}
+                          {p.tiene_promo && (
+                            <>
+                              <div>
+                                <span className="block font-semibold text-volcan-taupe">Promo:</span>
+                                <span className="font-bold text-sm text-volcan-ember">{p.precio_promo ? `$${p.precio_promo.toLocaleString()}` : '-'}</span>
+                              </div>
+                              {p.duracion_promo_meses ? (
+                                <div>
+                                  <span className="block font-semibold text-volcan-taupe">Duración:</span>
+                                  <span className="font-bold text-sm text-volcan-night">{p.duracion_promo_meses} meses</span>
+                                </div>
+                              ) : null}
+                            </>
+                          )}
                         </div>
 
                         {p.descripcion && <p className="text-sm text-volcan-night/85 mb-4">{p.descripcion}</p>}
@@ -1631,7 +1637,7 @@ export default function Admin() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Precio Regular (ARS)</label>
                   <input 
@@ -1641,25 +1647,41 @@ export default function Admin() {
                     className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Precio Promo (ARS)</label>
-                  <input 
-                    type="number" 
-                    value={planForm.precio_promo}
-                    onChange={(e) => setPlanForm(prev => ({ ...prev, precio_promo: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Duración Promo (Meses)</label>
-                  <input 
-                    type="number" 
-                    value={planForm.duracion_promo_meses}
-                    onChange={(e) => setPlanForm(prev => ({ ...prev, duracion_promo_meses: parseInt(e.target.value) || 0 }))}
-                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
-                  />
+                <div className="flex items-end pb-3">
+                  <label className="flex items-center gap-2 select-none cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={planForm.tiene_promo}
+                      onChange={(e) => setPlanForm(prev => ({ ...prev, tiene_promo: e.target.checked }))}
+                      className="w-4 h-4 text-volcan-ember border-volcan-taupe/20 rounded focus:ring-volcan-ember cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-volcan-taupe uppercase">¿Tiene Promoción?</span>
+                  </label>
                 </div>
               </div>
+
+              {planForm.tiene_promo && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Precio Promo (ARS)</label>
+                    <input 
+                      type="number" 
+                      value={planForm.precio_promo}
+                      onChange={(e) => setPlanForm(prev => ({ ...prev, precio_promo: parseInt(e.target.value) || 0 }))}
+                      className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Duración Promo (Meses)</label>
+                    <input 
+                      type="number" 
+                      value={planForm.duracion_promo_meses}
+                      onChange={(e) => setPlanForm(prev => ({ ...prev, duracion_promo_meses: parseInt(e.target.value) || 0 }))}
+                      className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Descripción Breve</label>

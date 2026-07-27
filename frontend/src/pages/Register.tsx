@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../lib/api';
 import { Eye, EyeOff, AlertCircle, CheckCircle2, Loader2, Check, X } from 'lucide-react';
-import logoVolcan from '../media/logo-volcan-dark.png';
+import BrandLogo from '../components/common/BrandLogo';
 
 interface PasswordRule {
   label: string;
@@ -96,21 +96,9 @@ export default function Register() {
       <div style={{ ...styles.orb, ...styles.orb3 }} />
 
       <div style={styles.card}>
-        {/* Centered Large Logo Header */}
+        {/* Centered Vector Brand Logo Header */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <Link to="/" style={{ display: 'inline-block', transition: 'transform 0.3s ease' }}>
-            <img 
-              src={logoVolcan} 
-              alt="Volcán Digital" 
-              style={{ 
-                height: '100px', 
-                width: 'auto', 
-                maxWidth: '100%',
-                margin: '0 auto', 
-                filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.5))' 
-              }} 
-            />
-          </Link>
+          <BrandLogo layout="vertical" iconSize="lg" />
         </div>
 
         <h1 style={styles.title}>Crear cuenta</h1>
