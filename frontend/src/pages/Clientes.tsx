@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { fetchClientes, Cliente, ClienteStat } from '../lib/api';
 import { 
-  ExternalLink, 
   TrendingUp, 
   Quote, 
   Target, 
   Sparkles, 
-  BarChart3, 
   Building2,
   CheckCircle2,
-  ChevronDown
+  ChevronRight,
+  ArrowUpRight
 } from 'lucide-react';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -27,10 +26,15 @@ const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 export default function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [selectedMobileId, setSelectedMobileId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchClientes().then(setClientes).catch(console.error);
+    fetchClientes().then(data => {
+      setClientes(data);
+      if (data.length > 0) {
+        setSelectedId(data[0].id);
+      }
+    }).catch(console.error);
   }, []);
 
   const getClienteEnriched = (cliente: Cliente) => {
@@ -61,6 +65,11 @@ export default function Clientes() {
     return { descripcion, comoLlego, comoMejoro, stats };
   };
 
+  // Determine active client (hovered takes temporary precedence, fallback to selected, fallback to first)
+  const activeCliente = clientes.find(c => c.id === (hoveredId || selectedId)) || clientes[0];
+  const activeEnriched = activeCliente ? getClienteEnriched(activeCliente) : null;
+  const activeBrandColor = activeCliente?.color_primario || '#D3A784';
+
   return (
     <div className="flex flex-col min-h-screen bg-volcan-cream">
       {/* Header Section */}
@@ -80,155 +89,194 @@ export default function Clientes() {
             </p>
             <div className="mt-8 inline-flex items-center gap-2 text-xs md:text-sm text-volcan-cream/70 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
               <span className="w-2 h-2 rounded-full bg-volcan-ember animate-ping shrink-0" />
-              <span>Posá el mouse sobre cualquier cliente para desplegar su historia completa y resultados</span>
+              <span>Pasá el mouse por la lista para desplegar en tiempo real la historia de cada cliente</span>
             </div>
           </FadeUp>
         </div>
       </section>
 
-      {/* Main Client Cards Section */}
+      {/* Main Showcase Section */}
       <section className="py-16 md:py-24 flex-grow">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6">
-            {clientes.map((cliente, index) => {
-              const isHovered = hoveredId === cliente.id;
-              const isMobileSelected = selectedMobileId === cliente.id;
-              const isExpanded = isHovered || isMobileSelected;
-              const enriched = getClienteEnriched(cliente);
-              const brandColor = cliente.color_primario || '#D3A784';
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {clientes.length === 0 ? (
+            <div className="py-20 text-center text-volcan-taupe">Cargando clientes...</div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* LEFT COLUMN: Fixed-size Stable List (0 layout shifts) */}
+              <div className="lg:col-span-5 space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-4 px-1 flex items-center justify-between">
+                  <span>Seleccioná un Cliente</span>
+                  <span className="text-[10px] text-volcan-ember font-semibold">{clientes.length} Casos de Éxito</span>
+                </div>
 
-              return (
-                <FadeUp key={cliente.id} delay={index * 0.06}>
-                  <div
-                    onMouseEnter={() => setHoveredId(cliente.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    onClick={() => setSelectedMobileId(isMobileSelected ? null : cliente.id)}
-                    className="relative rounded-3xl bg-white border border-volcan-taupe/20 cursor-pointer overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
-                    style={{
-                      borderLeft: `6px solid ${brandColor}`
-                    }}
-                  >
-                    {/* Top Header Card (Always Constant & Stable Layout) */}
-                    <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                      <div className="flex items-start gap-5">
+                {clientes.map((cliente) => {
+                  const isActive = activeCliente?.id === cliente.id;
+                  const brandColor = cliente.color_primario || '#D3A784';
+
+                  return (
+                    <div
+                      key={cliente.id}
+                      onMouseEnter={() => setHoveredId(cliente.id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      onClick={() => setSelectedId(cliente.id)}
+                      className={`group relative p-5 rounded-2xl border cursor-pointer transition-all duration-200 flex items-center justify-between gap-4 ${
+                        isActive
+                          ? 'bg-white border-volcan-ember/40 shadow-lg ring-1 ring-volcan-ember/20 translate-x-1'
+                          : 'bg-white/70 border-volcan-taupe/15 hover:bg-white hover:border-volcan-taupe/30 shadow-sm'
+                      }`}
+                      style={{
+                        borderLeft: `4px solid ${isActive ? brandColor : 'transparent'}`
+                      }}
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
                         {/* Logo */}
                         <div 
-                          className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-volcan-cream flex items-center justify-center overflow-hidden border border-volcan-taupe/20 shrink-0 shadow-inner"
-                          style={{ borderColor: isExpanded ? `${brandColor}50` : undefined }}
+                          className="w-14 h-14 rounded-xl bg-volcan-cream flex items-center justify-center overflow-hidden border border-volcan-taupe/20 shrink-0 shadow-inner"
+                          style={{ borderColor: isActive ? `${brandColor}40` : undefined }}
                         >
                           {cliente.tiene_imagen ? (
                             <img
                               src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clientes/${cliente.id}/imagen`}
                               alt={cliente.nombre}
-                              className="w-full h-full object-contain p-2"
+                              className="w-full h-full object-contain p-1.5"
                             />
                           ) : (
-                            <span className="text-volcan-taupe/50 font-serif text-2xl md:text-3xl font-bold">
+                            <span className="text-volcan-taupe/50 font-serif text-2xl font-bold">
                               {cliente.nombre.charAt(0)}
                             </span>
                           )}
                         </div>
 
                         {/* Name & Rubro */}
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span 
-                              className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
-                              style={{ 
-                                backgroundColor: `${brandColor}18`,
-                                color: brandColor 
-                              }}
-                            >
-                              {cliente.rubro || 'Cliente Activo'}
-                            </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-volcan-taupe truncate mb-0.5">
+                            {cliente.rubro || 'Cliente Activo'}
                           </div>
-                          <h3 className="text-2xl md:text-3xl font-serif font-bold text-volcan-night">
+                          <h3 className={`text-lg font-serif font-bold truncate transition-colors ${
+                            isActive ? 'text-volcan-night' : 'text-volcan-night/80 group-hover:text-volcan-night'
+                          }`}>
                             {cliente.nombre}
                           </h3>
-                          {cliente.sitio_url && (
-                            <a
-                              href={cliente.sitio_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold mt-1 hover:underline transition-colors"
-                              style={{ color: brandColor }}
-                            >
-                              <span>Visitar sitio web</span>
-                              <ExternalLink size={13} />
-                            </a>
+                          {cliente.resultado_destacado && (
+                            <div className="text-xs font-semibold flex items-center gap-1 mt-1 truncate" style={{ color: brandColor }}>
+                              <TrendingUp size={13} className="shrink-0" />
+                              <span className="truncate">{cliente.resultado_destacado}</span>
+                            </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Right Header Side: Featured Result & Expand Indicator */}
-                      <div className="flex items-center gap-4 shrink-0">
-                        {cliente.resultado_destacado && (
-                          <div className="bg-volcan-taupe/10 rounded-2xl px-4 py-3 flex items-center gap-3 border border-volcan-taupe/20">
-                            <div 
-                              className="p-2 rounded-xl shrink-0"
-                              style={{ backgroundColor: `${brandColor}20`, color: brandColor }}
+                      {/* Chevron Arrow Indicator */}
+                      <div 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          isActive 
+                            ? 'bg-volcan-ember text-white shadow-md' 
+                            : 'bg-volcan-cream/60 text-volcan-taupe/60 group-hover:text-volcan-night group-hover:bg-volcan-cream'
+                        }`}
+                      >
+                        <ChevronRight size={16} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* RIGHT COLUMN: Smooth Lateral Showcase Panel (Desplegable a la derecha) */}
+              {activeCliente && activeEnriched && (
+                <div className="lg:col-span-7 lg:sticky lg:top-28">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeCliente.id}
+                      initial={{ opacity: 0, x: 15, scale: 0.99 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -15, scale: 0.99 }}
+                      transition={{ duration: 0.28, ease: [0.25, 1, 0.5, 1] }}
+                      className="bg-white rounded-3xl p-6 md:p-8 border border-volcan-taupe/20 shadow-xl relative overflow-hidden"
+                      style={{
+                        borderTop: `5px solid ${activeBrandColor}`
+                      }}
+                    >
+                      {/* Top Header Row */}
+                      <div className="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-volcan-taupe/15">
+                        <div className="flex items-center gap-4">
+                          <div 
+                            className="w-16 h-16 rounded-2xl bg-volcan-cream flex items-center justify-center overflow-hidden border border-volcan-taupe/20 shrink-0 shadow-inner"
+                            style={{ borderColor: `${activeBrandColor}40` }}
+                          >
+                            {activeCliente.tiene_imagen ? (
+                              <img
+                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clientes/${activeCliente.id}/imagen`}
+                                alt={activeCliente.nombre}
+                                className="w-full h-full object-contain p-2"
+                              />
+                            ) : (
+                              <span className="text-volcan-taupe/50 font-serif text-3xl font-bold">
+                                {activeCliente.nombre.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+
+                          <div>
+                            <span 
+                              className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full"
+                              style={{ 
+                                backgroundColor: `${activeBrandColor}18`,
+                                color: activeBrandColor 
+                              }}
                             >
-                              <TrendingUp size={18} />
+                              {activeCliente.rubro || 'Caso de Éxito'}
+                            </span>
+                            <h2 className="text-2xl md:text-3xl font-serif font-bold text-volcan-night mt-1">
+                              {activeCliente.nombre}
+                            </h2>
+                          </div>
+                        </div>
+
+                        {activeCliente.sitio_url && (
+                          <a
+                            href={activeCliente.sitio_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-white px-4 py-2 rounded-xl shadow-sm transition-all hover:scale-105"
+                            style={{ backgroundColor: activeBrandColor }}
+                          >
+                            <span>Visitar sitio</span>
+                            <ArrowUpRight size={14} />
+                          </a>
+                        )}
+                      </div>
+
+                      {/* Main Showcase Details */}
+                      <div className="mt-6 space-y-6">
+                        {/* Featured Result Banner */}
+                        {activeCliente.resultado_destacado && (
+                          <div className="bg-volcan-taupe/10 rounded-2xl p-4 flex items-center gap-3 border border-volcan-taupe/20">
+                            <div 
+                              className="p-2.5 rounded-xl shrink-0"
+                              style={{ backgroundColor: `${activeBrandColor}20`, color: activeBrandColor }}
+                            >
+                              <TrendingUp size={22} />
                             </div>
                             <div>
                               <div className="text-[10px] font-bold uppercase tracking-wider text-volcan-taupe">
-                                Resultado Destacado
+                                Impacto Principal
                               </div>
-                              <div className="text-volcan-night font-bold text-sm md:text-base">
-                                {cliente.resultado_destacado}
+                              <div className="text-volcan-night font-bold text-lg">
+                                {activeCliente.resultado_destacado}
                               </div>
                             </div>
                           </div>
                         )}
 
-                        {/* Chevron Trigger Icon */}
-                        <div 
-                          className="w-10 h-10 rounded-full flex items-center justify-center border border-volcan-taupe/20 bg-volcan-cream/50 text-volcan-taupe transition-transform duration-300"
-                          style={{
-                            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                            color: isExpanded ? brandColor : undefined,
-                            backgroundColor: isExpanded ? `${brandColor}15` : undefined
-                          }}
-                        >
-                          <ChevronDown size={20} />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Smooth Expandable Content Panel (Sin tirones ni doble choque) */}
-                    <motion.div
-                      initial={false}
-                      animate={{ 
-                        height: isExpanded ? 'auto' : 0, 
-                        opacity: isExpanded ? 1 : 0 
-                      }}
-                      transition={{ 
-                        duration: 0.38, 
-                        ease: [0.32, 0.72, 0, 1] 
-                      }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <div className="px-6 pb-8 md:px-8 pt-2 border-t border-volcan-taupe/15 space-y-6">
-                        {/* Top Info Tag */}
-                        <div className="flex items-center justify-between pt-4 pb-2 border-b border-volcan-taupe/10">
-                          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-volcan-taupe">
-                            <BarChart3 size={16} style={{ color: brandColor }} />
-                            <span>Diagnóstico, Estrategia &amp; Métricas Clave</span>
-                          </div>
-                          <span className="text-[10px] font-semibold bg-volcan-ember/10 text-volcan-ember px-2.5 py-1 rounded-full">
-                            Caso de Éxito Volcán
-                          </span>
-                        </div>
-
                         {/* Brief Description */}
                         <div>
                           <h4 className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-1 flex items-center gap-1.5">
-                            <Building2 size={14} />
+                            <Building2 size={14} style={{ color: activeBrandColor }} />
                             <span>Acerca de la Empresa</span>
                           </h4>
-                          <p className="text-sm text-volcan-night/80 leading-relaxed">
-                            {enriched.descripcion}
+                          <p className="text-sm text-volcan-night/85 leading-relaxed font-normal">
+                            {activeEnriched.descripcion}
                           </p>
                         </div>
 
@@ -241,11 +289,11 @@ export default function Clientes() {
                                 <Target size={16} />
                               </div>
                               <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900">
-                                ¿Cómo llegó? (Desafío inicial)
+                                ¿Cómo llegó? (Desafío)
                               </h4>
                             </div>
                             <p className="text-xs text-amber-950/80 leading-relaxed">
-                              {enriched.comoLlego}
+                              {activeEnriched.comoLlego}
                             </p>
                           </div>
 
@@ -256,11 +304,11 @@ export default function Clientes() {
                                 <Sparkles size={16} />
                               </div>
                               <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-900">
-                                ¿Cómo mejoró? (Estrategia Volcán)
+                                ¿Cómo mejoró? (Estrategia)
                               </h4>
                             </div>
                             <p className="text-xs text-emerald-950/80 leading-relaxed">
-                              {enriched.comoMejoro}
+                              {activeEnriched.comoMejoro}
                             </p>
                           </div>
                         </div>
@@ -268,22 +316,22 @@ export default function Clientes() {
                         {/* Stats Badges */}
                         <div>
                           <h4 className="text-xs font-bold uppercase tracking-wider text-volcan-taupe mb-3 flex items-center gap-1.5">
-                            <CheckCircle2 size={14} style={{ color: brandColor }} />
-                            <span>Resultados &amp; Indicadores de Rendimiento</span>
+                            <CheckCircle2 size={14} style={{ color: activeBrandColor }} />
+                            <span>Indicadores Clave de Rendimiento</span>
                           </h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            {enriched.stats.map((stat, idx) => (
+                          <div className="grid grid-cols-3 gap-3">
+                            {activeEnriched.stats.map((stat, idx) => (
                               <div
                                 key={idx}
                                 className="bg-volcan-cream/60 rounded-xl p-3 border border-volcan-taupe/15 text-center flex flex-col justify-center"
                               >
                                 <div 
                                   className="text-lg md:text-xl font-bold font-serif"
-                                  style={{ color: brandColor }}
+                                  style={{ color: activeBrandColor }}
                                 >
                                   {stat.valor}
                                 </div>
-                                <div className="text-[10px] font-bold text-volcan-taupe uppercase tracking-wider mt-0.5">
+                                <div className="text-[10px] font-bold text-volcan-taupe uppercase tracking-wider mt-0.5 truncate">
                                   {stat.label}
                                 </div>
                               </div>
@@ -292,22 +340,22 @@ export default function Clientes() {
                         </div>
 
                         {/* Testimonial if available */}
-                        {cliente.testimonio && (
-                          <div className="relative bg-white rounded-2xl p-4 border border-volcan-taupe/20 shadow-sm">
+                        {activeCliente.testimonio && (
+                          <div className="relative bg-volcan-cream/40 rounded-2xl p-4 border border-volcan-taupe/20">
                             <Quote className="absolute right-3 top-3 text-volcan-ember/20 w-7 h-7 pointer-events-none" />
                             <p className="text-xs italic text-volcan-night/80 leading-relaxed pr-6">
-                              "{cliente.testimonio}"
+                              "{activeCliente.testimonio}"
                             </p>
                           </div>
                         )}
                       </div>
                     </motion.div>
+                  </AnimatePresence>
+                </div>
+              )}
 
-                  </div>
-                </FadeUp>
-              );
-            })}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
