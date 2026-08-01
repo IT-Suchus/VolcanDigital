@@ -6,7 +6,7 @@ from app.routers import clientes, planes, equipo, leads, metricas, auth
 from app.database import SessionLocal
 from app.models import MetricaRequest
 
-app = FastAPI(title="Volcán Digital API", description="API para el sitio web de Volcán Digital")
+app = FastAPI(title="Volcán Digital API", description="API para el sitio web de Volcán Digital", redirect_slashes=False)
 
 # Middleware para registrar cada request en la base de datos
 @app.middleware("http")

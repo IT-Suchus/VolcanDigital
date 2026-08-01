@@ -128,7 +128,7 @@ export const fetchAdminClientes = async (): Promise<Cliente[]> => {
 };
 
 export const createCliente = async (clienteData: Omit<Cliente, 'id' | 'tiene_imagen'>): Promise<Cliente> => {
-  const { data } = await api.post('/api/clientes/', clienteData);
+  const { data } = await api.post('/api/clientes', clienteData);
   return data;
 };
 
@@ -143,7 +143,7 @@ export const deleteCliente = async (clienteId: number): Promise<void> => {
 
 // Admin Planes API
 export const createPlan = async (planData: Omit<Plan, 'id'>): Promise<Plan> => {
-  const { data } = await api.post('/api/planes/', planData);
+  const { data } = await api.post('/api/planes', planData);
   return data;
 };
 
@@ -158,7 +158,7 @@ export const deletePlan = async (planId: number): Promise<void> => {
 
 // Admin Equipo API
 export const createIntegrante = async (integranteData: Omit<Integrante, 'id' | 'tiene_imagen'>): Promise<Integrante> => {
-  const { data } = await api.post('/api/equipo/', integranteData);
+  const { data } = await api.post('/api/equipo', integranteData);
   return data;
 };
 
