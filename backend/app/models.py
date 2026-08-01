@@ -31,6 +31,10 @@ class Cliente(Base):
     activo = Column(Boolean, default=True)
     color_primario = Column(String(7), nullable=True)
     color_secundario = Column(String(7), nullable=True)
+    descripcion = Column(Text, nullable=True)
+    como_llego = Column(Text, nullable=True)
+    como_mejoro = Column(Text, nullable=True)
+    stats = Column(JSON, nullable=True)
 
     @property
     def tiene_imagen(self):

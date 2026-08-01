@@ -54,7 +54,11 @@ export default function Admin() {
     orden: 0,
     activo: true,
     color_primario: '',
-    color_secundario: ''
+    color_secundario: '',
+    descripcion: '',
+    como_llego: '',
+    como_mejoro: '',
+    statsRaw: ''
   });
   const [clienteFile, setClienteFile] = useState<File | null>(null);
   const [clientePreview, setClientePreview] = useState<string>('');
@@ -347,7 +351,11 @@ export default function Admin() {
       orden: 0,
       activo: true,
       color_primario: '',
-      color_secundario: ''
+      color_secundario: '',
+      descripcion: '',
+      como_llego: '',
+      como_mejoro: '',
+      statsRaw: ''
     });
     setClienteFile(null);
     setClientePreview('');
@@ -356,6 +364,10 @@ export default function Admin() {
 
   const openEditCliente = (c: Cliente) => {
     setEditingCliente(c);
+    const formattedStats = Array.isArray(c.stats) 
+      ? c.stats.map((s: any) => `${s.label}:${s.valor}`).join(', ')
+      : '';
+
     setClienteForm({
       nombre: c.nombre,
       sitio_url: c.sitio_url || '',
@@ -365,7 +377,11 @@ export default function Admin() {
       orden: c.orden,
       activo: c.activo,
       color_primario: c.color_primario || '',
-      color_secundario: c.color_secundario || ''
+      color_secundario: c.color_secundario || '',
+      descripcion: c.descripcion || '',
+      como_llego: c.como_llego || '',
+      como_mejoro: c.como_mejoro || '',
+      statsRaw: formattedStats
     });
     setClienteFile(null);
     setClientePreview('');
@@ -375,6 +391,14 @@ export default function Admin() {
   const handleSaveCliente = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      let parsedStats = null;
+      if (clienteForm.statsRaw.trim()) {
+        parsedStats = clienteForm.statsRaw.split(',').map(item => {
+          const [label, valor] = item.split(':');
+          return { label: (label || '').trim(), valor: (valor || '').trim() };
+        }).filter(s => s.label && s.valor);
+      }
+
       let savedCliente: Cliente;
       const clientData = {
         nombre: clienteForm.nombre,
@@ -385,7 +409,11 @@ export default function Admin() {
         orden: clienteForm.orden,
         activo: clienteForm.activo,
         color_primario: clienteForm.color_primario || null,
-        color_secundario: clienteForm.color_secundario || null
+        color_secundario: clienteForm.color_secundario || null,
+        descripcion: clienteForm.descripcion || null,
+        como_llego: clienteForm.como_llego || null,
+        como_mejoro: clienteForm.como_mejoro || null,
+        stats: parsedStats
       };
 
       if (editingCliente) {
@@ -1432,7 +1460,7 @@ export default function Admin() {
       {/* -------------------- MODAL: CLIENTE FORM -------------------- */}
       {showClienteModal && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveCliente} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
+          <form onSubmit={handleSaveCliente} className="bg-white rounded-2xl max-w-2xl w-full border border-volcan-taupe/20 shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => setShowClienteModal(false)}
@@ -1522,8 +1550,50 @@ export default function Admin() {
                 <textarea 
                   value={clienteForm.testimonio}
                   onChange={(e) => setClienteForm(prev => ({ ...prev, testimonio: e.target.value }))}
-                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-20 resize-none"
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-16 resize-none"
                   placeholder="Texto del testimonio..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Breve Descripción del Negocio</label>
+                <textarea 
+                  value={clienteForm.descripcion}
+                  onChange={(e) => setClienteForm(prev => ({ ...prev, descripcion: e.target.value }))}
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-16 resize-none"
+                  placeholder="Ej: E-commerce especializado en productos de diseño..."
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">¿Cómo llegó? (Desafío inicial)</label>
+                  <textarea 
+                    value={clienteForm.como_llego}
+                    onChange={(e) => setClienteForm(prev => ({ ...prev, como_llego: e.target.value }))}
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-20 resize-none"
+                    placeholder="Ej: Dependían del boca en boca local y no tenían ventas online constantes..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">¿Cómo mejoró? (Estrategia)</label>
+                  <textarea 
+                    value={clienteForm.como_mejoro}
+                    onChange={(e) => setClienteForm(prev => ({ ...prev, como_mejoro: e.target.value }))}
+                    className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none h-20 resize-none"
+                    placeholder="Ej: Optimizamos campañas en Meta Ads e integramos respuesta automatizada..."
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Métricas &amp; Stats Clave (Formato: Etiqueta:Valor, separados por coma)</label>
+                <input 
+                  type="text" 
+                  value={clienteForm.statsRaw}
+                  onChange={(e) => setClienteForm(prev => ({ ...prev, statsRaw: e.target.value }))}
+                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none text-xs"
+                  placeholder="Ej: Consultas:+40%, ROAS Meta:4.2x, Ventas Online:+115%"
                 />
               </div>
 

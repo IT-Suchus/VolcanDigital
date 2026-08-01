@@ -46,6 +46,11 @@ export interface Plan {
   orden: number;
 }
 
+export interface ClienteStat {
+  label: string;
+  valor: string;
+}
+
 export interface Cliente {
   id: number;
   nombre: string;
@@ -58,6 +63,10 @@ export interface Cliente {
   tiene_imagen: boolean;
   color_primario: string | null;
   color_secundario: string | null;
+  descripcion?: string | null;
+  como_llego?: string | null;
+  como_mejoro?: string | null;
+  stats?: ClienteStat[] | null;
 }
 
 export interface Lead {

@@ -103,11 +103,66 @@ def seed_data(db: Session):
     # 2. Seed Clientes
     if not db.query(Cliente).first():
         clientes = [
-            Cliente(nombre="Alma Flora", sitio_url="https://almaflora.com.ar", rubro="Vivero / Tienda de plantas", resultado_destacado="+40% en consultas", orden=1),
-            Cliente(nombre="Brindo", sitio_url="https://brindocopas.com", rubro="Cristalería", resultado_destacado="Crecimiento sostenido en ventas online", orden=2),
-            Cliente(nombre="Dra. Vitoria Carvalho", sitio_url="https://instagram.com", rubro="Salud / Odontología", resultado_destacado="Agenda completa mensual", orden=3),
-            Cliente(nombre="Ale Bikes La Plata", sitio_url="https://instagram.com", rubro="Bicicletería", resultado_destacado="Aumento en reparaciones y ventas", orden=4),
-            Cliente(nombre="BMT Abogados", sitio_url="https://bmtabogados.com.ar", rubro="Servicios Legales", resultado_destacado="Generación de leads B2B", orden=5)
+            Cliente(
+                nombre="Alma Flora", 
+                sitio_url="https://almaflora.com.ar", 
+                rubro="Vivero / Tienda de plantas", 
+                resultado_destacado="+40% en consultas", 
+                orden=1,
+                color_primario="#2E7D32",
+                descripcion="E-commerce y tienda botánica dedicada a la venta de plantas de interior, macetas de diseño y asesoramiento de paisajismo urbano.",
+                como_llego="Llegaron dependiendo del público presencial del barrio y referencias locales. No poseían un canal digital estructurado para captar clientes constantes.",
+                como_mejoro="Diseñamos campañas de conversión directa en Meta Ads dirigidas a amantes de la botánica, optimizamos su catálogo web y aceleramos el canal de ventas por WhatsApp.",
+                stats=[{"label": "Consultas Diarias", "valor": "+40%"}, {"label": "ROAS Meta", "valor": "4.2x"}, {"label": "Ventas Online", "valor": "+115%"}]
+            ),
+            Cliente(
+                nombre="Brindo", 
+                sitio_url="https://brindocopas.com", 
+                rubro="Cristalería & Bazar Premium", 
+                resultado_destacado="Crecimiento sostenido en ventas online", 
+                orden=2,
+                color_primario="#D3A784",
+                descripcion="Marca especializada en cristalería de alta gama, copas de degustación y accesorios para sommeliers.",
+                como_llego="Contaban con una tienda online poco optimizada y campañas publicitarias sin seguimiento de conversiones ni píxel configurado.",
+                como_mejoro="Restructuramos el seguimiento con GA4 y Meta CAPI, implementamos campañas de retargeting dinámico y aumentamos el valor promedio de ticket.",
+                stats=[{"label": "Facturación Web", "valor": "+180%"}, {"label": "ROAS Promedio", "valor": "5.1x"}, {"label": "Costo por Adquisición", "valor": "-35%"}]
+            ),
+            Cliente(
+                nombre="Dra. Vitoria Carvalho", 
+                sitio_url="https://instagram.com", 
+                rubro="Salud / Odontología Estética", 
+                resultado_destacado="Agenda completa mensual", 
+                orden=3,
+                color_primario="#0284C7",
+                descripcion="Consultorio odontológico especializado en alineadores invisibles, diseño de sonrisa y estética dental avanzada.",
+                como_llego="Dificultad para atraer pacientes para tratamientos de alto valor. Dependían de publicaciones orgánicas con bajo alcance.",
+                como_mejoro="Creamos anuncios de video atractivos mostrando testimonios reales de pacientes y desarrollamos un embudo de reserva directa en WhatsApp.",
+                stats=[{"label": "Pacientes Nuevos/Mes", "valor": "+65"}, {"label": "Ocupación Agenda", "valor": "100%"}, {"label": "Retorno Inversión", "valor": "6.4x"}]
+            ),
+            Cliente(
+                nombre="Ale Bikes La Plata", 
+                sitio_url="https://instagram.com", 
+                rubro="Bicicletería & Taller Especializado", 
+                resultado_destacado="Aumento en reparaciones y ventas", 
+                orden=4,
+                color_primario="#E65100",
+                descripcion="Local de venta de bicicletas de competición, componentes urbanos y servicio técnico especializado.",
+                como_llego="Alto stock acumulado y poca fluidez de servicios de taller durante la temporada baja.",
+                como_mejoro="Lanzamos promociones estacionales geolocalizadas a 5 km a la redonda y un sistema de agendamiento para service rápido.",
+                stats=[{"label": "Turnos Taller", "valor": "+85%"}, {"label": "Venta Bicicletas", "valor": "+45%"}, {"label": "Alcance Local", "valor": "25k personas"}]
+            ),
+            Cliente(
+                nombre="BMT Abogados", 
+                sitio_url="https://bmtabogados.com.ar", 
+                rubro="Servicios Legales & Corporativos", 
+                resultado_destacado="Generación de leads B2B", 
+                orden=5,
+                color_primario="#374151",
+                descripcion="Estudio jurídico focalizado en asesoramiento corporativo, derecho comercial y protección patrimonial de empresas.",
+                como_llego="Buscaban captar empresas y pymes que requieran abonos legales mensuales sin competir por precio.",
+                como_mejoro="Diseñamos una landing page corporativa de alta conversión y campañas de búsqueda en Google Ads para términos calificados B2B.",
+                stats=[{"label": "Consultas B2B", "valor": "+12/mes"}, {"label": "Tasa de Cierre", "valor": "38%"}, {"label": "Valor Cliente", "valor": "+210%"}]
+            )
         ]
         db.add_all(clientes)
         db.commit()

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import datetime
 
 # Leads
@@ -34,6 +34,10 @@ class ClienteCreate(BaseModel):
     activo: bool = True
     color_primario: Optional[str] = Field(None, max_length=7)
     color_secundario: Optional[str] = Field(None, max_length=7)
+    descripcion: Optional[str] = None
+    como_llego: Optional[str] = None
+    como_mejoro: Optional[str] = None
+    stats: Optional[Any] = None
 
 class ClienteUpdate(BaseModel):
     nombre: Optional[str] = None
@@ -45,6 +49,10 @@ class ClienteUpdate(BaseModel):
     activo: Optional[bool] = None
     color_primario: Optional[str] = Field(None, max_length=7)
     color_secundario: Optional[str] = Field(None, max_length=7)
+    descripcion: Optional[str] = None
+    como_llego: Optional[str] = None
+    como_mejoro: Optional[str] = None
+    stats: Optional[Any] = None
 
 class ClienteResponse(ClienteCreate):
     id: int
