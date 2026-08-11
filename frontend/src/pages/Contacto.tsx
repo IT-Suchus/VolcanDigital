@@ -98,7 +98,7 @@ export default function Contacto() {
                         <label className="block text-sm font-medium text-volcan-night mb-2">Nombre completo *</label>
                         <input
                           {...register('nombre', { required: 'El nombre es obligatorio', minLength: { value: 2, message: 'Mínimo 2 caracteres' } })}
-                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.nombre ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
+                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.nombre ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                           placeholder="Juan Pérez"
                         />
                         {errors.nombre && <p className="mt-1 text-sm text-volcan-clay">{errors.nombre.message}</p>}
@@ -108,7 +108,7 @@ export default function Contacto() {
                         <input
                           type="email"
                           {...register('email', { required: 'El email es obligatorio', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } })}
-                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.email ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
+                          className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors ${errors.email ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                           placeholder="juan@empresa.com"
                         />
                         {errors.email && <p className="mt-1 text-sm text-volcan-clay">{errors.email.message}</p>}
@@ -120,7 +120,7 @@ export default function Contacto() {
                         <label className="block text-sm font-medium text-volcan-night mb-2">Teléfono / WhatsApp</label>
                         <input
                           {...register('telefono')}
-                          className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
+                          className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
                           placeholder="+54 9 11 1234-5678"
                         />
                       </div>
@@ -128,7 +128,7 @@ export default function Contacto() {
                         <label className="block text-sm font-medium text-volcan-night mb-2">Nombre de tu negocio / web</label>
                         <input
                           {...register('negocio')}
-                          className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
+                          className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
                           placeholder="empresa.com.ar"
                         />
                       </div>
@@ -138,11 +138,11 @@ export default function Contacto() {
                       <label className="block text-sm font-medium text-volcan-night mb-2">Plan de interés</label>
                       <select
                         {...register('plan_interes')}
-                        className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-volcan-taupe/20 bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors"
                       >
-                        <option value="">Aún no lo sé, busco asesoramiento</option>
+                        <option value="" className="text-volcan-night bg-white">Aún no lo sé, busco asesoramiento</option>
                         {planes.map(p => (
-                          <option key={p.id} value={p.nombre}>{p.nombre}</option>
+                          <option key={p.id} value={p.nombre} className="text-volcan-night bg-white">{p.nombre}</option>
                         ))}
                       </select>
                     </div>
@@ -152,7 +152,7 @@ export default function Contacto() {
                       <textarea
                         rows={4}
                         {...register('mensaje', { required: 'Por favor, dejanos un mensaje', minLength: { value: 10, message: 'Contanos un poco más sobre tu necesidad' } })}
-                        className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors resize-none ${errors.mensaje ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
+                        className={`w-full px-4 py-3 rounded-xl border bg-volcan-cream/50 focus:bg-white text-volcan-night placeholder:text-volcan-taupe/60 focus:outline-none focus:ring-2 focus:ring-volcan-ember/50 transition-colors resize-none ${errors.mensaje ? 'border-volcan-clay' : 'border-volcan-taupe/20'}`}
                         placeholder="Contanos cuáles son tus objetivos, cuánto estás facturando aprox, o si ya haces publicidad..."
                       ></textarea>
                       {errors.mensaje && <p className="mt-1 text-sm text-volcan-clay">{errors.mensaje.message}</p>}

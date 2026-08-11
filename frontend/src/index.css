@@ -10,6 +10,10 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif;
   }
+
+  input, select, textarea {
+    @apply text-volcan-night placeholder:text-volcan-taupe/60;
+  }
 }
 
 @layer components {

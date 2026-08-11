@@ -15,7 +15,8 @@ import {
 } from '../lib/api';
 import { 
   LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
-  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog
+  AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog,
+  MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -148,6 +149,20 @@ export default function Admin() {
 
   // Detail Modal for leads
   const [viewingLead, setViewingLead] = useState<Lead | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyText = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  const getWhatsAppUrl = (lead: Lead) => {
+    if (!lead.telefono) return '';
+    const cleanPhone = lead.telefono.replace(/[^0-9]/g, '');
+    const text = encodeURIComponent(`¡Hola ${lead.nombre}! Te escribo de Volcán Digital respecto a tu consulta.`);
+    return `https://wa.me/${cleanPhone}?text=${text}`;
+  };
 
   // General message state
   const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: 'success' });
@@ -764,8 +779,19 @@ export default function Admin() {
                     </thead>
                     <tbody className="divide-y divide-volcan-taupe/20 bg-white text-sm">
                       {leads.map((l) => (
-                        <tr key={l.id} className="hover:bg-volcan-cream/30">
-                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-volcan-night">{l.nombre}</td>
+                        <tr 
+                          key={l.id} 
+                          onClick={() => setViewingLead(l)}
+                          className="hover:bg-volcan-cream/40 cursor-pointer transition-colors group"
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-volcan-night">
+                            <div className="flex items-center gap-2">
+                              <span>{l.nombre}</span>
+                              <span className="text-[10px] text-volcan-ember bg-volcan-ember/10 font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                Ver detalle
+                              </span>
+                            </div>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-volcan-night/85">
                             <div>{l.email}</div>
                             {l.telefono && <div className="text-xs text-volcan-taupe">{l.telefono}</div>}
@@ -780,7 +806,7 @@ export default function Admin() {
                             {new Date(l.created_at).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
                               l.estado === 'nuevo' ? 'bg-blue-100 text-blue-800' :
                               l.estado === 'en_proceso' ? 'bg-amber-100 text-amber-800' :
                               l.estado === 'contactado' ? 'bg-green-100 text-green-800' :
@@ -789,18 +815,25 @@ export default function Admin() {
                               {l.estado}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center text-xs space-x-2">
+                          <td className="px-6 py-4 whitespace-nowrap text-center text-xs space-x-2" onClick={(e) => e.stopPropagation()}>
                             <button
-                              onClick={() => setViewingLead(l)}
-                              className="text-volcan-night hover:text-volcan-night p-1 rounded hover:bg-volcan-taupe/15 inline-flex items-center justify-center"
-                              title="Ver detalles"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setViewingLead(l);
+                              }}
+                              className="text-volcan-night hover:text-volcan-ember p-1.5 rounded-lg hover:bg-volcan-taupe/15 inline-flex items-center justify-center transition-colors"
+                              title="Ver detalles completos"
                             >
-                              <Eye size={16} />
+                              <Eye size={18} />
                             </button>
                             <select
                               value={l.estado}
-                              onChange={(e) => handleStatusChange(l.id, e.target.value)}
-                              className="text-xs border border-volcan-taupe/20 rounded bg-white p-1 focus:ring-volcan-ember focus:outline-none"
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleStatusChange(l.id, e.target.value);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-xs border border-volcan-taupe/20 rounded-lg bg-white p-1.5 focus:ring-volcan-ember focus:outline-none cursor-pointer"
                             >
                               <option value="nuevo">Nuevo</option>
                               <option value="en_proceso">En Proceso</option>
@@ -1376,58 +1409,21 @@ export default function Admin() {
       {/* -------------------- DETAIL MODAL: LEAD -------------------- */}
       {viewingLead && (
         <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
+          <div className="bg-white rounded-3xl max-w-2xl w-full border border-volcan-taupe/20 shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setViewingLead(null)}
-              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
+              className="absolute top-5 right-5 text-volcan-taupe hover:text-volcan-night p-2 rounded-full hover:bg-volcan-cream transition-colors"
+              title="Cerrar"
             >
               <X size={20} />
             </button>
-            <h3 className="text-xl font-serif font-bold text-volcan-night mb-4">Detalle de Lead</h3>
-            
-            <div className="space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-4 bg-volcan-cream p-4 rounded-xl">
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Nombre:</span>
-                  <span className="font-bold text-volcan-night text-base">{viewingLead.nombre}</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Negocio / Marca:</span>
-                  <span className="font-bold text-volcan-night text-base">{viewingLead.negocio || 'No especifica'}</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Email:</span>
-                  <a href={`mailto:${viewingLead.email}`} className="text-volcan-ember hover:underline font-medium">{viewingLead.email}</a>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Teléfono:</span>
-                  {viewingLead.telefono ? (
-                    <a href={`tel:${viewingLead.telefono}`} className="text-volcan-night font-medium hover:underline">{viewingLead.telefono}</a>
-                  ) : <span className="text-volcan-taupe/70">No especifica</span>}
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Plan de Interés:</span>
-                  <span className="bg-volcan-taupe/15 text-volcan-night px-2 py-0.5 rounded font-medium text-xs">
-                    {viewingLead.plan_interes || 'General'}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-volcan-taupe uppercase">Fecha de Envío:</span>
-                  <span className="font-medium text-volcan-night">{new Date(viewingLead.created_at).toLocaleString()}</span>
-                </div>
-              </div>
 
+            {/* Modal Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pr-8 pb-4 border-b border-volcan-taupe/15">
               <div>
-                <span className="block text-xs font-semibold text-volcan-taupe uppercase mb-2">Mensaje del Cliente:</span>
-                <div className="bg-volcan-cream/40 border border-volcan-taupe/20 p-4 rounded-xl whitespace-pre-wrap leading-relaxed text-volcan-night/90">
-                  {viewingLead.mensaje}
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-volcan-taupe">ESTADO ACTUAL:</span>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="text-2xl font-serif font-bold text-volcan-night">{viewingLead.nombre}</h3>
+                  <span className={`px-3 py-0.5 rounded-full text-xs font-bold capitalize ${
                     viewingLead.estado === 'nuevo' ? 'bg-blue-100 text-blue-800' :
                     viewingLead.estado === 'en_proceso' ? 'bg-amber-100 text-amber-800' :
                     viewingLead.estado === 'contactado' ? 'bg-green-100 text-green-800' :
@@ -1436,21 +1432,114 @@ export default function Admin() {
                     {viewingLead.estado}
                   </span>
                 </div>
+                <p className="text-xs text-volcan-taupe flex items-center gap-1.5">
+                  <Calendar size={13} />
+                  Recibido el {new Date(viewingLead.created_at).toLocaleString('es-AR', { dateStyle: 'full', timeStyle: 'short' })}
+                </p>
+              </div>
+            </div>
 
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => { handleStatusChange(viewingLead.id, 'en_proceso'); }}
-                    className="px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-semibold rounded-lg border border-amber-200 transition-colors"
-                  >
-                    Marcar En Proceso
-                  </button>
-                  <button 
-                    onClick={() => { handleStatusChange(viewingLead.id, 'contactado'); }}
-                    className="px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 text-xs font-semibold rounded-lg border border-green-200 transition-colors"
-                  >
-                    Marcar Contactado
-                  </button>
+            {/* Quick Action Bar */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              {viewingLead.telefono && (
+                <a
+                  href={getWhatsAppUrl(viewingLead)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 min-w-[160px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm"
+                >
+                  <MessageSquare size={18} />
+                  Contactar por WhatsApp
+                </a>
+              )}
+              <a
+                href={`mailto:${viewingLead.email}?subject=${encodeURIComponent('Consulta Volcán Digital')}`}
+                className="flex-1 min-w-[140px] bg-volcan-night hover:bg-volcan-clay text-white font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm"
+              >
+                <Mail size={18} />
+                Enviar Email
+              </a>
+            </div>
+
+            {/* Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-volcan-cream/60 p-4 rounded-2xl border border-volcan-taupe/15">
+                <div className="text-xs font-bold text-volcan-taupe uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Mail size={14} className="text-volcan-ember" /> Email de Contacto
                 </div>
+                <a href={`mailto:${viewingLead.email}`} className="font-semibold text-volcan-night hover:text-volcan-ember hover:underline break-all">
+                  {viewingLead.email}
+                </a>
+              </div>
+
+              <div className="bg-volcan-cream/60 p-4 rounded-2xl border border-volcan-taupe/15">
+                <div className="text-xs font-bold text-volcan-taupe uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Phone size={14} className="text-volcan-ember" /> Teléfono / WhatsApp
+                </div>
+                {viewingLead.telefono ? (
+                  <a href={getWhatsAppUrl(viewingLead)} target="_blank" rel="noreferrer" className="font-semibold text-volcan-night hover:text-emerald-700 hover:underline">
+                    {viewingLead.telefono}
+                  </a>
+                ) : (
+                  <span className="text-volcan-taupe/70 italic text-sm">No especificado</span>
+                )}
+              </div>
+
+              <div className="bg-volcan-cream/60 p-4 rounded-2xl border border-volcan-taupe/15">
+                <div className="text-xs font-bold text-volcan-taupe uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Building size={14} className="text-volcan-ember" /> Negocio / Marca
+                </div>
+                <span className="font-semibold text-volcan-night">
+                  {viewingLead.negocio || <span className="text-volcan-taupe/70 italic text-sm">No especificado</span>}
+                </span>
+              </div>
+
+              <div className="bg-volcan-cream/60 p-4 rounded-2xl border border-volcan-taupe/15">
+                <div className="text-xs font-bold text-volcan-taupe uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Tag size={14} className="text-volcan-ember" /> Plan de Interés
+                </div>
+                <span className="inline-block bg-volcan-taupe/15 text-volcan-night font-bold text-xs px-2.5 py-1 rounded-lg">
+                  {viewingLead.plan_interes || 'Asesoramiento General'}
+                </span>
+              </div>
+            </div>
+
+            {/* Message Section */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-bold text-volcan-taupe uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles size={14} className="text-volcan-ember" /> Mensaje del Cliente
+                </span>
+                <button
+                  onClick={() => handleCopyText(viewingLead.mensaje, 'mensaje')}
+                  className="text-xs text-volcan-ember hover:text-volcan-clay font-semibold flex items-center gap-1 transition-colors"
+                >
+                  {copiedField === 'mensaje' ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                  {copiedField === 'mensaje' ? '¡Copiado!' : 'Copiar mensaje'}
+                </button>
+              </div>
+              <div className="bg-volcan-cream/40 border border-volcan-taupe/20 p-5 rounded-2xl whitespace-pre-wrap leading-relaxed text-volcan-night text-sm shadow-inner max-h-60 overflow-y-auto">
+                {viewingLead.mensaje}
+              </div>
+            </div>
+
+            {/* Footer / Status Changer */}
+            <div className="pt-4 border-t border-volcan-taupe/15 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-xs font-bold text-volcan-taupe uppercase">Cambiar Estado:</div>
+              <div className="flex flex-wrap gap-2">
+                {['nuevo', 'en_proceso', 'contactado', 'descartado'].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => handleStatusChange(viewingLead.id, st)}
+                    className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all capitalize border ${
+                      viewingLead.estado === st
+                        ? 'bg-volcan-night text-white border-volcan-night shadow-sm'
+                        : 'bg-white text-volcan-night border-volcan-taupe/20 hover:bg-volcan-cream'
+                    }`}
+                  >
+                    {st.replace('_', ' ')}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
