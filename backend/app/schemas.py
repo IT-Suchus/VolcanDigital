@@ -90,24 +90,6 @@ class PlanResponse(PlanCreate):
     class Config:
         from_attributes = True
 
-# Equipo
-class IntegranteCreate(BaseModel):
-    nombre: str
-    rol: str
-    orden: int = 0
-
-class IntegranteUpdate(BaseModel):
-    nombre: Optional[str] = None
-    rol: Optional[str] = None
-    orden: Optional[int] = None
-
-class IntegranteResponse(IntegranteCreate):
-    id: int
-    tiene_imagen: bool
-
-    class Config:
-        from_attributes = True
-
 # Usuarios
 class UsuarioRegister(BaseModel):
     nombre: str = Field(..., min_length=2, max_length=255)

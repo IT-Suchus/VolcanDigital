@@ -82,14 +82,6 @@ export interface Lead {
   created_at: string;
 }
 
-export interface Integrante {
-  id: number;
-  nombre: string;
-  rol: string;
-  orden: number;
-  tiene_imagen: boolean;
-}
-
 export const fetchPlanes = async (): Promise<Plan[]> => {
   const { data } = await api.get('/api/planes');
   return data;
@@ -97,11 +89,6 @@ export const fetchPlanes = async (): Promise<Plan[]> => {
 
 export const fetchClientes = async (): Promise<Cliente[]> => {
   const { data } = await api.get('/api/clientes');
-  return data;
-};
-
-export const fetchEquipo = async (): Promise<Integrante[]> => {
-  const { data } = await api.get('/api/equipo');
   return data;
 };
 
@@ -156,36 +143,10 @@ export const deletePlan = async (planId: number): Promise<void> => {
   await api.delete(`/api/planes/${planId}`);
 };
 
-// Admin Equipo API
-export const createIntegrante = async (integranteData: Omit<Integrante, 'id' | 'tiene_imagen'>): Promise<Integrante> => {
-  const { data } = await api.post('/api/equipo', integranteData);
-  return data;
-};
-
-export const updateIntegrante = async (memberId: number, integranteData: Partial<Omit<Integrante, 'id' | 'tiene_imagen'>>): Promise<Integrante> => {
-  const { data } = await api.put(`/api/equipo/${memberId}`, integranteData);
-  return data;
-};
-
-export const deleteIntegrante = async (memberId: number): Promise<void> => {
-  await api.delete(`/api/equipo/${memberId}`);
-};
-
 export const uploadClienteImagen = async (clienteId: number, file: File): Promise<{ ok: boolean; id: number }> => {
   const formData = new FormData();
   formData.append('file', file);
   const { data } = await api.put(`/api/clientes/${clienteId}/imagen`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return data;
-};
-
-export const uploadIntegranteImagen = async (memberId: number, file: File): Promise<{ ok: boolean; id: number }> => {
-  const formData = new FormData();
-  formData.append('file', file);
-  const { data } = await api.put(`/api/equipo/${memberId}/imagen`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

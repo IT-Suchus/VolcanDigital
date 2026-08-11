@@ -54,20 +54,6 @@ class Plan(Base):
     no_incluye = Column(JSON, nullable=True)
     orden = Column(Integer, default=0)
 
-class Integrante(Base):
-    __tablename__ = "equipo"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(255), nullable=False)
-    rol = Column(String(255), nullable=False)
-    imagen_data = Column(LargeBinary, nullable=True)
-    imagen_tipo = Column(String(40), nullable=True)
-    orden = Column(Integer, default=0)
-
-    @property
-    def tiene_imagen(self):
-        return self.imagen_data is not None
-
 class MetricaRequest(Base):
     __tablename__ = "metricas_request"
 

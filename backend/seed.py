@@ -1,7 +1,7 @@
 import os
 from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
-from app.models import Cliente, Plan, Integrante, Usuario
+from app.models import Cliente, Plan, Usuario
 from app.auth import hash_password
 
 def seed_data(db: Session):
@@ -167,17 +167,6 @@ def seed_data(db: Session):
         db.add_all(clientes)
         db.commit()
         print("Clientes insertados.")
-
-    # 3. Seed Equipo
-    if not db.query(Integrante).first():
-        equipo = [
-            Integrante(nombre="Pablo", rol="Desarrollo WordPress, tiendas online, Google Ads, GA4", orden=1),
-            Integrante(nombre="Vitoria", rol="Estrategia general, SEO, Meta Ads", orden=2),
-            Integrante(nombre="Lara", rol="Especialista en Meta Ads y ejecución de campañas", orden=3)
-        ]
-        db.add_all(equipo)
-        db.commit()
-        print("Equipo insertado.")
 
     # 4. Seed Usuarios
     if not db.query(Usuario).first():

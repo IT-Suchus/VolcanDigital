@@ -5,8 +5,7 @@ import {
   fetchAdminLeads, updateLeadStatus, Lead,
   fetchAdminClientes, createCliente, updateCliente, deleteCliente, Cliente,
   fetchPlanes, createPlan, updatePlan, deletePlan, Plan,
-  fetchEquipo, createIntegrante, updateIntegrante, deleteIntegrante, Integrante,
-  uploadClienteImagen, uploadIntegranteImagen,
+  uploadClienteImagen,
   fetchResumenMetricas, fetchLeadsPorMes, fetchLeadsPorEstado, fetchLeadsPorPlan,
   fetchMetricasTecnicasResumen, fetchMetricasTecnicasTiempoRespuesta, fetchMetricasTecnicasRequestsPorEndpoint,
   ResumenMetricas, LeadsPorMes, LeadsPorEstado, LeadsPorPlan,
@@ -14,7 +13,7 @@ import {
   fetchAdminUsuarios, updateUsuarioEstado, deleteUsuario, Usuario
 } from '../lib/api';
 import { 
-  LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
+  LogOut, FileText, Briefcase, Plus, Edit, Trash2, CheckCircle2,
   AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog,
   MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check, ArrowUp, ArrowDown
 } from 'lucide-react';
@@ -31,7 +30,7 @@ export default function Admin() {
   const [loggedInUser, setLoggedInUser] = useState('');
   const [loggedInRole, setLoggedInRole] = useState('');
   const [loggedInNombre, setLoggedInNombre] = useState('');
-  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'equipo' | 'usuarios' | 'metricas'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas'>('leads');
 
   // Usuarios state
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -85,7 +84,7 @@ export default function Admin() {
     }
   }, [location.pathname]);
 
-  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'equipo' | 'usuarios' | 'metricas') => {
+  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas') => {
     setActiveTab(tab);
     if (tab === 'metricas') {
       navigate('/admin/metricas');
@@ -111,19 +110,6 @@ export default function Admin() {
     orden: 0
   });
 
-  // Team state
-  const [equipo, setEquipo] = useState<Integrante[]>([]);
-  const [loadingEquipo, setLoadingEquipo] = useState(false);
-  const [editingMember, setEditingMember] = useState<Integrante | null>(null);
-  const [showMemberModal, setShowMemberModal] = useState(false);
-  const [memberForm, setMemberForm] = useState({
-    nombre: '',
-    rol: '',
-    orden: 0
-  });
-  const [memberFile, setMemberFile] = useState<File | null>(null);
-  const [memberPreview, setMemberPreview] = useState<string>('');
-
   const handleClienteFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -132,20 +118,8 @@ export default function Admin() {
     }
   };
 
-  const handleMemberFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setMemberFile(file);
-      setMemberPreview(URL.createObjectURL(file));
-    }
-  };
-
   const clienteImageUrl = editingCliente?.tiene_imagen
     ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clientes/${editingCliente.id}/imagen`
-    : '';
-
-  const memberImageUrl = editingMember?.tiene_imagen
-    ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/equipo/${editingMember.id}/imagen`
     : '';
 
   // Detail Modal for leads
@@ -270,19 +244,6 @@ export default function Admin() {
           setPlanes([]);
         })
         .finally(() => setLoadingPlanes(false));
-    } else if (activeTab === 'equipo') {
-      setLoadingEquipo(true);
-      fetchEquipo()
-        .then(data => {
-          if (Array.isArray(data)) setEquipo(data);
-          else throw new Error("API no devolvió un array");
-        })
-        .catch(err => {
-          console.error(err);
-          showFeedback('Error al cargar integrantes del equipo', 'error');
-          setEquipo([]);
-        })
-        .finally(() => setLoadingEquipo(false));
     } else if (activeTab === 'usuarios') {
       setLoadingUsuarios(true);
       fetchAdminUsuarios()
@@ -580,81 +541,6 @@ export default function Admin() {
     }
   };
 
-  // Team handlers
-  const openNewMember = () => {
-    setEditingMember(null);
-    setMemberForm({
-      nombre: '',
-      rol: '',
-      orden: 0
-    });
-    setMemberFile(null);
-    setMemberPreview('');
-    setShowMemberModal(true);
-  };
-
-  const openEditMember = (m: Integrante) => {
-    setEditingMember(m);
-    setMemberForm({
-      nombre: m.nombre,
-      rol: m.rol,
-      orden: m.orden
-    });
-    setMemberFile(null);
-    setMemberPreview('');
-    setShowMemberModal(true);
-  };
-
-  const handleSaveMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      let savedMember: Integrante;
-      const memberData = {
-        nombre: memberForm.nombre,
-        rol: memberForm.rol,
-        orden: memberForm.orden
-      };
-
-      if (editingMember) {
-        savedMember = await updateIntegrante(editingMember.id, memberData);
-      } else {
-        savedMember = await createIntegrante(memberData);
-      }
-
-      if (memberFile) {
-        try {
-          await uploadIntegranteImagen(savedMember.id, memberFile);
-          showFeedback(editingMember ? 'Integrante e imagen actualizados' : 'Integrante creado con imagen');
-        } catch (uploadErr: any) {
-          console.error(uploadErr);
-          const errorMsg = uploadErr.response?.data?.detail || 'Error al subir la imagen (formato inválido o supera los 5MB)';
-          showFeedback(`Integrante guardado, pero falló la imagen: ${errorMsg}`, 'error');
-        }
-      } else {
-        showFeedback(editingMember ? 'Integrante del equipo actualizado' : 'Integrante del equipo creado');
-      }
-
-      setShowMemberModal(false);
-      loadData();
-    } catch (err) {
-      console.error(err);
-      showFeedback('Error al guardar integrante', 'error');
-    }
-  };
-
-  const handleDeleteMember = async (id: number) => {
-    if (window.confirm('¿Seguro que deseas eliminar este integrante?')) {
-      try {
-        await deleteIntegrante(id);
-        showFeedback('Integrante del equipo eliminado');
-        loadData();
-      } catch (err) {
-        console.error(err);
-        showFeedback('Error al eliminar integrante', 'error');
-      }
-    }
-  };
-
   if (!isAuthenticated) {
     return null; // RequireAuth in App.tsx handles redirect to /login
   }
@@ -713,17 +599,6 @@ export default function Admin() {
             <span>Planes Comerciales</span>
           </button>
           <button
-            onClick={() => handleTabChange('equipo')}
-            className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
-              activeTab === 'equipo' 
-                ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember' 
-                : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
-            }`}
-          >
-            <Users size={20} />
-            <span>Equipo</span>
-          </button>
-          <button
             onClick={() => handleTabChange('metricas')}
             className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
               activeTab === 'metricas' 
@@ -775,7 +650,7 @@ export default function Admin() {
           {/* Heading with Refresh */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-volcan-night capitalize flex items-center gap-2">
-              {activeTab === 'equipo' ? 'Nuestro Equipo' : activeTab}
+              {activeTab}
             </h1>
             <button 
               onClick={loadData}
@@ -1099,79 +974,6 @@ export default function Admin() {
                         >
                           <Trash2 size={14} />
                           Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* -------------------- TAB: EQUIPO -------------------- */}
-          {activeTab === 'equipo' && (
-            <div>
-              <div className="mb-6 flex justify-start">
-                <button
-                  onClick={openNewMember}
-                  className="flex items-center gap-2 btn-gradient-whatsapp text-white px-5 py-3 rounded-xl font-bold hover:scale-[1.02] shadow-md transition-all text-sm"
-                >
-                  <Plus size={18} />
-                  Agregar Integrante
-                </button>
-              </div>
-
-              {loadingEquipo ? (
-                <div className="py-20 text-center text-volcan-taupe">Cargando equipo...</div>
-              ) : equipo.length === 0 ? (
-                <div className="py-20 text-center text-volcan-taupe bg-white rounded-2xl border border-volcan-taupe/20">No hay integrantes en el equipo.</div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {equipo.map((m) => (
-                    <div key={m.id} className="bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-                      <div>
-                        <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-volcan-taupe font-bold">Orden: {m.orden}</span>
-                          <span className="text-xs text-volcan-ember font-bold bg-volcan-ember/15 px-2 py-0.5 rounded-md">ID: {m.id}</span>
-                        </div>
-                        <h3 className="font-serif font-bold text-xl text-volcan-night mb-1">{m.nombre}</h3>
-                        <p className="text-sm font-semibold text-volcan-taupe mb-4">{m.rol}</p>
-                        
-                        <div className="my-3 flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-volcan-cream border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
-                            {m.tiene_imagen ? (
-                              <img 
-                                src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/equipo/${m.id}/imagen`} 
-                                alt={m.nombre}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-volcan-taupe/40 font-serif font-bold text-lg">{m.nombre.charAt(0)}</span>
-                            )}
-                          </div>
-                          <div>
-                            <span className="text-xs text-volcan-taupe font-semibold block">Foto del Integrante</span>
-                            <span className="text-[10px] text-volcan-taupe/70">
-                              {m.tiene_imagen ? 'Almacenada en BD' : 'Sin foto cargada'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-6 pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
-                        <button
-                          onClick={() => openEditMember(m)}
-                          className="p-2 border border-volcan-taupe/20 rounded-xl bg-white hover:bg-volcan-cream text-volcan-night hover:text-volcan-night transition-colors"
-                          title="Editar"
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteMember(m.id)}
-                          className="p-2 border border-red-200 rounded-xl bg-white hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
-                          title="Eliminar"
-                        >
-                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
@@ -1958,102 +1760,6 @@ export default function Admin() {
         </div>
       )}
 
-      {/* -------------------- MODAL: EQUIPO FORM -------------------- */}
-      {showMemberModal && (
-        <div className="fixed inset-0 bg-volcan-night/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleSaveMember} className="bg-white rounded-2xl max-w-lg w-full border border-volcan-taupe/20 shadow-2xl p-6 relative">
-            <button
-              type="button"
-              onClick={() => setShowMemberModal(false)}
-              className="absolute top-4 right-4 text-volcan-taupe hover:text-volcan-night p-1 rounded-lg hover:bg-volcan-cream transition-colors"
-            >
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-serif font-bold text-volcan-night mb-4">
-              {editingMember ? 'Editar Integrante' : 'Agregar Integrante'}
-            </h3>
-
-            <div className="space-y-4 text-sm">
-              <div>
-                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Nombre Completo *</label>
-                <input 
-                  type="text" 
-                  required
-                  value={memberForm.nombre}
-                  onChange={(e) => setMemberForm(prev => ({ ...prev, nombre: e.target.value }))}
-                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
-                  placeholder="Ej: Pablo"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Rol / Especialidad *</label>
-                <input 
-                  type="text" 
-                  required
-                  value={memberForm.rol}
-                  onChange={(e) => setMemberForm(prev => ({ ...prev, rol: e.target.value }))}
-                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
-                  placeholder="Ej: Especialista Meta Ads, WP"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Foto del Integrante (JPG/PNG/WEBP, máx 5MB)</label>
-                <div className="mt-1 flex items-center gap-4 p-3 border border-dashed border-volcan-taupe/20 rounded-xl bg-volcan-cream/30">
-                  <div className="w-16 h-16 rounded-xl bg-white border border-volcan-taupe/20 flex items-center justify-center overflow-hidden shrink-0">
-                    {memberPreview ? (
-                      <img src={memberPreview} alt="Preview" className="w-full h-full object-cover" />
-                    ) : memberImageUrl ? (
-                      <img src={memberImageUrl} alt="Current" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-volcan-taupe/40 font-bold text-2xl">?</span>
-                    )}
-                  </div>
-                  <div className="flex-grow">
-                    <input 
-                      type="file" 
-                      accept="image/png, image/jpeg, image/webp"
-                      onChange={handleMemberFileChange}
-                      className="block w-full text-xs text-volcan-night file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-volcan-ember/15 file:text-volcan-ember hover:file:bg-volcan-ember/25 cursor-pointer"
-                    />
-                    <p className="mt-1 text-[10px] text-volcan-taupe">
-                      {memberFile ? `Archivo seleccionado: ${memberFile.name} (${(memberFile.size / 1024).toFixed(1)} KB)` : 'Seleccioná un archivo para cargar/reemplazar'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">Orden de Visualización</label>
-                <input 
-                  type="number" 
-                  value={memberForm.orden}
-                  onChange={(e) => setMemberForm(prev => ({ ...prev, orden: parseInt(e.target.value) || 0 }))}
-                  className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 focus:ring-2 focus:ring-volcan-ember focus:outline-none"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-volcan-taupe/20 flex justify-end gap-2 bg-white">
-                <button
-                  type="button"
-                  onClick={() => setShowMemberModal(false)}
-                  className="px-5 py-2.5 border border-volcan-taupe/20 text-volcan-night hover:bg-volcan-cream rounded-xl text-sm font-semibold transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 btn-gradient-whatsapp text-white rounded-xl text-sm font-bold shadow transition-all flex items-center gap-1.5"
-                >
-                  <Save size={16} />
-                  Guardar
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }
