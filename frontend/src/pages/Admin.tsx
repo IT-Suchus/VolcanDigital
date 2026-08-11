@@ -16,7 +16,7 @@ import {
 import { 
   LogOut, FileText, Users, Briefcase, Plus, Edit, Trash2, CheckCircle2, 
   AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog,
-  MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check
+  MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check, ArrowUp, ArrowDown
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -44,6 +44,7 @@ export default function Admin() {
   // Clients state
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loadingClientes, setLoadingClientes] = useState(false);
+  const [reorderingClientes, setReorderingClientes] = useState(false);
   const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
   const [showClienteModal, setShowClienteModal] = useState(false);
   const [clienteForm, setClienteForm] = useState({
@@ -471,6 +472,35 @@ export default function Admin() {
     }
   };
 
+  // Reordena un cliente una posición arriba/abajo y renumera todo el listado
+  const handleMoveCliente = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (reorderingClientes || targetIndex < 0 || targetIndex >= clientes.length) return;
+
+    const reordered = [...clientes];
+    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+
+    // Renumeración secuencial (1..n) para que el orden sea siempre inequívoco
+    const renumbered = reordered.map((c, i) => ({ ...c, orden: i + 1 }));
+    const cambiados = renumbered.filter((c) => {
+      const previo = clientes.find(o => o.id === c.id);
+      return previo && previo.orden !== c.orden;
+    });
+
+    setReorderingClientes(true);
+    setClientes(renumbered); // feedback optimista
+    try {
+      await Promise.all(cambiados.map(c => updateCliente(c.id, { orden: c.orden })));
+      showFeedback('Orden actualizado');
+    } catch (err) {
+      console.error(err);
+      showFeedback('Error al reordenar clientes', 'error');
+      loadData(); // revierte al estado real del servidor
+    } finally {
+      setReorderingClientes(false);
+    }
+  };
+
   // Plans handlers
   const openNewPlan = () => {
     setEditingPlan(null);
@@ -853,7 +883,7 @@ export default function Admin() {
           {/* -------------------- TAB: CLIENTES -------------------- */}
           {activeTab === 'clientes' && (
             <div>
-              <div className="mb-6 flex justify-start">
+              <div className="mb-6 flex flex-wrap justify-between items-center gap-3">
                 <button
                   onClick={openNewCliente}
                   className="flex items-center gap-2 btn-gradient-whatsapp text-white px-5 py-3 rounded-xl font-bold hover:scale-[1.02] shadow-md transition-all text-sm"
@@ -861,6 +891,10 @@ export default function Admin() {
                   <Plus size={18} />
                   Agregar Cliente
                 </button>
+                <p className="text-xs text-volcan-taupe flex items-center gap-1.5">
+                  <ArrowUp size={13} className="text-volcan-ember" />
+                  Usá las flechas para definir el orden en que se muestran en la web pública
+                </p>
               </div>
 
               {loadingClientes ? (
@@ -869,10 +903,10 @@ export default function Admin() {
                 <div className="py-20 text-center text-volcan-taupe bg-white rounded-2xl border border-volcan-taupe/20">No hay clientes cargados.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {clientes.map((c) => (
-                    <div 
-                      key={c.id} 
-                      className={`bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative ${!c.activo && 'opacity-60 bg-gray-50'}`}
+                  {clientes.map((c, index) => (
+                    <div
+                      key={c.id}
+                      className={`bg-white p-6 rounded-2xl border border-volcan-taupe/20 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative ${!c.activo && 'opacity-60 bg-gray-50'} ${reorderingClientes ? 'pointer-events-none opacity-70' : ''}`}
                       style={{ borderTop: `4px solid ${c.color_primario || '#D3A784'}` }}
                     >
                       {!c.activo && (
@@ -880,7 +914,27 @@ export default function Admin() {
                       )}
                       <div>
                         <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-volcan-taupe font-bold">Orden: {c.orden}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-volcan-night text-white text-xs font-bold shrink-0">
+                              {index + 1}
+                            </span>
+                            <button
+                              onClick={() => handleMoveCliente(index, 'up')}
+                              disabled={index === 0 || reorderingClientes}
+                              className="p-1 rounded-md border border-volcan-taupe/20 bg-white text-volcan-night hover:bg-volcan-cream disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              title="Subir posición"
+                            >
+                              <ArrowUp size={12} />
+                            </button>
+                            <button
+                              onClick={() => handleMoveCliente(index, 'down')}
+                              disabled={index === clientes.length - 1 || reorderingClientes}
+                              className="p-1 rounded-md border border-volcan-taupe/20 bg-white text-volcan-night hover:bg-volcan-cream disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              title="Bajar posición"
+                            >
+                              <ArrowDown size={12} />
+                            </button>
+                          </div>
                           <span 
                             className="text-xs font-semibold bg-volcan-ember/10 px-2 py-0.5 rounded-md"
                             style={{ color: c.color_primario || '#D3A784', backgroundColor: `${c.color_primario || '#D3A784'}1A` }}

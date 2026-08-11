@@ -65,7 +65,7 @@ export default function Servicios() {
     },
     {
       question: "¿Tengo que proveer los videos y fotos para los anuncios?",
-      answer: "Sí, en los planes Impulso y Performance el material crudo lo provee el cliente (nosotros te pasamos los guiones y lineamientos). Si no tenés quién te grabe o edite, contamos con un servicio extra de Filmaker y Edición."
+      answer: "Sí, en los planes Impulso y Performance el material crudo lo provee el cliente (nosotros te pasamos los guiones y lineamientos). Si no tenés quién te grabe o edite, contamos con un servicio extra de Filmmaker y Edición."
     }
   ];
 
@@ -76,7 +76,7 @@ export default function Servicios() {
         <div className="max-w-4xl mx-auto px-4">
           <FadeUp>
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6">Planes de Gestión</h1>
-            <p className="text-xl text-volcan-cream/90">Menos humo, más resultados medibles. Elegí el nivel de acompañamiento que tu negocio necesita para escalar.</p>
+            <p className="text-xl text-volcan-cream/90">Elegí el nivel de acompañamiento que tu negocio necesita para ordenar su estrategia, ejecutar mejor y crecer con mayor claridad.</p>
           </FadeUp>
         </div>
       </section>
@@ -169,11 +169,11 @@ export default function Servicios() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-xl font-bold text-volcan-night mb-2">Filmaker</h4>
-                  <p className="text-volcan-taupe text-sm mb-6">Grabación presencial (La Plata/CABA) y edición de 4 videos optimizados para pauta.</p>
+                  <h4 className="text-xl font-bold text-volcan-night mb-2">Filmmaker</h4>
+                  <p className="text-volcan-taupe text-sm mb-6">Grabación presencial (La Plata/CABA) y edición de videos optimizados para pauta.</p>
                 </div>
                 <a
-                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20el%20servicio%20de%20Filmaker"
+                  href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20el%20servicio%20de%20Filmmaker"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 bg-volcan-clay text-white px-6 py-3 rounded-xl font-medium hover:bg-volcan-ember hover:text-volcan-night transition-colors text-sm w-full"
@@ -184,7 +184,7 @@ export default function Servicios() {
               <div className="bg-white p-8 rounded-2xl shadow-sm text-left border border-volcan-taupe/20 flex flex-col justify-between">
                 <div>
                   <h4 className="text-xl font-bold text-volcan-night mb-2">Edición de Video</h4>
-                  <p className="text-volcan-taupe text-sm mb-6">Edición dinámica de 4 videos utilizando el material crudo enviado por vos.</p>
+                  <p className="text-volcan-taupe text-sm mb-6">Edición dinámica de videos utilizando el material crudo enviado por vos.</p>
                 </div>
                 <a
                   href="https://wa.me/5492216743529?text=Hola%2C%20quiero%20consultar%20por%20el%20servicio%20de%20Edici%C3%B3n%20de%20Video"
