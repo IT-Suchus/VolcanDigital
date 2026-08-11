@@ -197,54 +197,58 @@ export default function Nosotros() {
       </section>
 
       {/* Con qué marcas queremos trabajar */}
-      <section className="bg-volcan-cream pb-24">
+      <section className="bg-volcan-cream py-16 sm:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl border border-volcan-taupe/20 shadow-sm p-8 sm:p-12">
+          <div className="bg-white rounded-3xl border border-volcan-taupe/20 shadow-sm p-6 sm:p-10 md:p-12">
             <FadeUp>
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-volcan-night leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-volcan-night leading-tight">
                 No buscamos trabajar con todo el mundo.
               </h2>
-              <p className="text-lg text-volcan-taupe mt-4">Queremos trabajar con marcas que tengan:</p>
+              <p className="text-base sm:text-lg text-volcan-taupe mt-3 sm:mt-4">Queremos trabajar con marcas que tengan:</p>
             </FadeUp>
 
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-6 sm:mt-8 space-y-3.5 sm:space-y-4">
               {marcasIdeales.map((marca, index) => (
                 <FadeUp key={marca} delay={0.08 * index}>
-                  <li className="flex items-start gap-3.5">
+                  <li className="flex items-start gap-3 sm:gap-3.5">
                     <span className="w-6 h-6 rounded-full bg-volcan-ember/15 flex items-center justify-center shrink-0 mt-0.5">
                       <Check size={14} className="text-volcan-ember" strokeWidth={3} />
                     </span>
-                    <span className="text-lg text-volcan-night/90">{marca}</span>
+                    <span className="text-base sm:text-lg text-volcan-night/90 leading-snug">{marca}</span>
                   </li>
                 </FadeUp>
               ))}
             </ul>
 
             <FadeUp delay={0.35}>
-              <p className="text-xl md:text-2xl font-serif font-bold text-volcan-night leading-snug mt-10 pt-8 border-t border-volcan-taupe/20">
+              <p className="text-lg sm:text-xl md:text-2xl font-serif font-bold text-volcan-night leading-snug mt-8 pt-6 sm:mt-10 sm:pt-8 border-t border-volcan-taupe/15">
                 Porque las mejores estrategias aparecen cuando agencia y negocio trabajan juntos.
               </p>
             </FadeUp>
           </div>
-        </div>
-      </section>
 
-      {/* Separator: Llama */}
-      <div className="flex items-center justify-center bg-volcan-cream pt-12">
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
-        <Flame className="text-volcan-ember/40 w-5 h-5 mx-4 shrink-0" />
-        <div className="w-1/4 max-w-[150px] h-[1px] bg-volcan-taupe/20"></div>
-      </div>
+          {/* Separator: Llama */}
+          <div className="my-12 sm:my-16 flex items-center justify-center gap-4">
+            <div className="w-16 sm:w-24 h-[1px] bg-volcan-taupe/25"></div>
+            <Flame className="text-volcan-ember/50 w-5 h-5 shrink-0" />
+            <div className="w-16 sm:w-24 h-[1px] bg-volcan-taupe/25"></div>
+          </div>
 
-      {/* Certifications */}
-      <section className="bg-volcan-cream py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Certifications */}
           <FadeUp>
-            <h3 className="text-sm font-bold text-volcan-taupe uppercase tracking-widest mb-8">Certificaciones y Formación</h3>
-            <div className="flex flex-wrap justify-center gap-12 opacity-70">
-              <span className="font-serif text-2xl font-bold text-volcan-night">Google Search Ads</span>
-              <span className="font-serif text-2xl font-bold text-volcan-night">Google Analytics 4</span>
-              <span className="font-serif text-2xl font-bold text-volcan-night">Coderhouse</span>
+            <div className="text-center">
+              <h3 className="text-xs sm:text-sm font-bold text-volcan-taupe uppercase tracking-widest mb-6">Certificaciones y Formación</h3>
+              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-5">
+                <div className="px-5 py-3 rounded-2xl bg-white border border-volcan-taupe/20 shadow-sm font-serif font-bold text-volcan-night text-base sm:text-lg hover:border-volcan-ember/40 transition-colors">
+                  Google Search Ads
+                </div>
+                <div className="px-5 py-3 rounded-2xl bg-white border border-volcan-taupe/20 shadow-sm font-serif font-bold text-volcan-night text-base sm:text-lg hover:border-volcan-ember/40 transition-colors">
+                  Google Analytics 4
+                </div>
+                <div className="px-5 py-3 rounded-2xl bg-white border border-volcan-taupe/20 shadow-sm font-serif font-bold text-volcan-night text-base sm:text-lg hover:border-volcan-ember/40 transition-colors">
+                  Coderhouse
+                </div>
+              </div>
             </div>
           </FadeUp>
         </div>
