@@ -249,7 +249,7 @@ export default function Home() {
 
       {/* Data Section */}
       <section className="bg-volcan-cream text-volcan-night py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night mb-6">Medimos y usamos datos</h2>
             <p className="text-lg mb-12">
@@ -257,25 +257,53 @@ export default function Home() {
             </p>
           </FadeUp>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             <FadeUp delay={0.1}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
-                <div className="font-semibold text-lg">Google Analytics 4</div>
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group flex flex-col items-center justify-center min-h-[140px]">
+                <div className="h-12 flex items-center justify-center mb-3">
+                  <img
+                    src="/logos/google-analytics.svg"
+                    alt="Google Analytics 4 Logo"
+                    className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+                <div className="font-semibold text-base sm:text-lg text-volcan-night leading-snug">Google Analytics 4</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
-                <div className="font-semibold text-lg">Meta Pixel & CAPI</div>
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group flex flex-col items-center justify-center min-h-[140px]">
+                <div className="h-12 flex items-center justify-center mb-3">
+                  <img
+                    src="/logos/meta.svg"
+                    alt="Meta Pixel & CAPI Logo"
+                    className="h-8 sm:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+                <div className="font-semibold text-base sm:text-lg text-volcan-night leading-snug">Meta Pixel & CAPI</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
-                <div className="font-semibold text-lg">Looker Studio</div>
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group flex flex-col items-center justify-center min-h-[140px]">
+                <div className="h-12 flex items-center justify-center mb-3">
+                  <img
+                    src="/logos/looker-studio.svg"
+                    alt="Looker Studio Logo"
+                    className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+                <div className="font-semibold text-base sm:text-lg text-volcan-night leading-snug">Looker Studio</div>
               </div>
             </FadeUp>
             <FadeUp delay={0.4}>
-              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 transition-colors">
-                <div className="font-semibold text-lg">Search Console</div>
+              <div className="p-6 bg-white rounded-2xl shadow-sm border border-volcan-taupe/20 hover:border-volcan-ember/50 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group flex flex-col items-center justify-center min-h-[140px]">
+                <div className="h-12 flex items-center justify-center mb-3">
+                  <img
+                    src="/logos/google-search-console.svg"
+                    alt="Search Console Logo"
+                    className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+                <div className="font-semibold text-base sm:text-lg text-volcan-night leading-snug">Search Console</div>
               </div>
             </FadeUp>
           </div>
