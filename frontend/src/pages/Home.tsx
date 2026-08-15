@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchClientes, Cliente } from '../lib/api';
 import { Target, TrendingUp, Users, MonitorSmartphone, Heart, MessageCircle, Send, GraduationCap, Layers, UserCheck, Bookmark, MoreHorizontal } from 'lucide-react';
-import metaAdsResultados from '../media/BANNER-CEL-PRINICPAL-1-1_IxjJWg2.png';
+import metaAdsResultados from '../assets/meta-ads-resultados.png';
 import volcanIcon from '../media/volcan-icon.png';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
@@ -181,7 +181,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-volcan-ember/15 rounded-full blur-3xl scale-90"></div>
                 
                 {/* Mock Instagram Ad Card */}
-                <div className="relative w-full max-w-[320px] sm:max-w-[350px] bg-white rounded-3xl shadow-2xl shadow-black/40 overflow-hidden border border-volcan-taupe/20 sm:rotate-2 hover:rotate-0 transition-all duration-500 z-10">
+                <div className="relative w-full max-w-[290px] sm:max-w-[320px] bg-white rounded-3xl shadow-2xl shadow-black/40 overflow-hidden border border-volcan-taupe/20 sm:rotate-2 hover:rotate-0 transition-all duration-500 z-10">
                   {/* Header */}
                   <div className="p-3.5 flex items-center justify-between border-b border-gray-100 bg-white">
                     <div className="flex items-center gap-2.5">
@@ -204,12 +204,12 @@ export default function Home() {
                     <MoreHorizontal size={18} className="text-gray-500 cursor-pointer" />
                   </div>
                   
-                  {/* Content: formato retrato 4:5 oficial de Instagram (1080x1350) con máxima nitidez */}
-                  <div className="aspect-[4/5] bg-[#fbfcfd] relative overflow-hidden group border-y border-gray-100">
+                  {/* Content: captura real de campaña (524x1024) con relación exacta sin recortes */}
+                  <div className="aspect-[524/1024] bg-white relative overflow-hidden group border-y border-gray-100">
                      <img
                        src={metaAdsResultados}
                        alt="Resultados reales de una campaña de Meta Ads gestionada por Volcán Digital"
-                       className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 block"
+                       className="w-full h-full object-contain group-hover:scale-[1.01] transition-transform duration-700 block"
                        loading="eager"
                      />
                   </div>
