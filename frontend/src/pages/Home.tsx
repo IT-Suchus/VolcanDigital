@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchClientes, Cliente } from '../lib/api';
-import { Target, TrendingUp, Users, MonitorSmartphone, Heart, MessageCircle, Send, GraduationCap, Layers, UserCheck, Bookmark, MoreHorizontal } from 'lucide-react';
+import { Target, TrendingUp, Users, MonitorSmartphone, GraduationCap, Layers, UserCheck } from 'lucide-react';
 import metaAdsResultados from '../assets/meta-ads-resultados.png';
-import volcanIcon from '../media/volcan-icon.png';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -180,64 +179,26 @@ export default function Home() {
                 {/* Decorative background glow */}
                 <div className="absolute inset-0 bg-volcan-ember/15 rounded-full blur-3xl scale-90"></div>
                 
-                {/* Mock Instagram Ad Card */}
-                <div className="relative w-full max-w-[290px] sm:max-w-[320px] bg-white rounded-3xl shadow-2xl shadow-black/40 overflow-hidden border border-volcan-taupe/20 sm:rotate-2 hover:rotate-0 transition-all duration-500 z-10">
-                  {/* Header */}
-                  <div className="p-3.5 flex items-center justify-between border-b border-gray-100 bg-white">
-                    <div className="flex items-center gap-2.5">
-                      {/* Avatar con la imagen real de Volcán Digital y anillo de Instagram story */}
-                      <div className="p-[2px] bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-full shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-[#161314] flex items-center justify-center p-1.5 border-2 border-white shadow-inner">
-                          <img src={volcanIcon} alt="Volcán Digital" className="w-full h-full object-contain" />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900 text-xs leading-none mb-0.5 flex items-center gap-1">
-                          volcan.digital
-                          <svg className="w-3.5 h-3.5 text-[#0095F6] inline-block" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2.25c.57 0 1.11.23 1.5.64l1.18 1.25a2.25 2.25 0 0 0 1.64.68h1.72c1.24 0 2.25 1.01 2.25 2.25v1.72c0 .6.24 1.17.68 1.64l1.25 1.18c.88.83.88 2.23 0 3.06l-1.25 1.18a2.25 2.25 0 0 0-.68 1.64v1.72c0 1.24-1.01 2.25-2.25 2.25h-1.72a2.25 2.25 0 0 0-1.64.68l-1.18 1.25a2.12 2.12 0 0 1-3.06 0l-1.18-1.25a2.25 2.25 0 0 0-1.64-.68H6.75c-1.24 0-2.25-1.01-2.25-2.25v-1.72a2.25 2.25 0 0 0-.68-1.64l-1.25-1.18a2.12 2.12 0 0 1 0-3.06l1.25-1.18c.44-.47.68-1.04.68-1.64V6.75c0-1.24 1.01-2.25 2.25-2.25h1.72c.6 0 1.17-.24 1.64-.68l1.18-1.25c.39-.41.93-.64 1.5-.64zm4.28 7.22a.75.75 0 0 0-1.06 0L10.5 14.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l2.25 2.25c.29.29.77.29 1.06 0l5.25-5.25a.75.75 0 0 0 0-1.06z" />
-                          </svg>
-                        </div>
-                        <div className="text-[10px] text-gray-400 font-normal">Publicidad</div>
-                      </div>
-                    </div>
-                    <MoreHorizontal size={18} className="text-gray-500 cursor-pointer" />
-                  </div>
-                  
-                  {/* Content: captura real de campaña (524x1024) con relación exacta sin recortes */}
-                  <div className="aspect-[524/1024] bg-white relative overflow-hidden group border-y border-gray-100">
-                     <img
-                       src={metaAdsResultados}
-                       alt="Resultados reales de una campaña de Meta Ads gestionada por Volcán Digital"
-                       className="w-full h-full object-contain group-hover:scale-[1.01] transition-transform duration-700 block"
-                       loading="eager"
-                     />
+                {/* Modern Smartphone Mockup */}
+                <div className="relative w-full max-w-[280px] sm:max-w-[300px] bg-[#1e1c1d] p-3 rounded-[3rem] border border-white/20 shadow-2xl shadow-black/60 sm:rotate-2 hover:rotate-0 transition-all duration-500 z-10">
+                  {/* Dynamic Island / Top Speaker */}
+                  <div className="w-24 h-4 bg-black rounded-full mx-auto mb-2.5 flex items-center justify-between px-3">
+                    <div className="w-2 h-2 rounded-full bg-[#111]"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#0d1b2a]"></div>
                   </div>
 
-                  {/* Sponsored Ad CTA Bar */}
-                  <div className="bg-[#f8f9fa] border-b border-gray-100 px-3.5 py-2 flex items-center justify-between text-xs font-semibold text-[#0095f6] hover:bg-gray-100 transition-colors cursor-pointer">
-                    <span>Más información</span>
-                    <span>›</span>
+                  {/* Phone Screen: captura real de resultados de campaña (524x1024) */}
+                  <div className="aspect-[524/1024] bg-white rounded-[2.2rem] overflow-hidden shadow-inner border border-black/10">
+                    <img
+                      src={metaAdsResultados}
+                      alt="Resultados reales de campaña de Meta Ads"
+                      className="w-full h-full object-cover block"
+                      loading="eager"
+                    />
                   </div>
-                  
-                  {/* Action bar */}
-                  <div className="p-3.5 bg-white">
-                    <div className="flex items-center justify-between mb-2 text-gray-900">
-                      <div className="flex items-center gap-3.5">
-                        <Heart size={22} className="hover:text-red-500 transition-colors cursor-pointer" />
-                        <MessageCircle size={22} className="hover:text-volcan-ember transition-colors cursor-pointer" />
-                        <Send size={22} className="hover:text-volcan-ember transition-colors cursor-pointer" />
-                      </div>
-                      <Bookmark size={22} className="hover:text-volcan-ember transition-colors cursor-pointer text-gray-700" />
-                    </div>
-                    <div className="text-xs font-semibold text-gray-900 mb-1">
-                      Les gusta a 1.420 personas
-                    </div>
-                    <div className="text-xs leading-snug">
-                      <span className="font-semibold text-gray-900 mr-1.5">volcan.digital</span>
-                      <span className="text-gray-700">Escalá tus ventas con campañas rentables. Menos humo, más resultados. 🚀</span>
-                    </div>
-                  </div>
+
+                  {/* Bottom Home Indicator Bar */}
+                  <div className="w-28 h-1 bg-white/25 rounded-full mx-auto mt-2.5"></div>
                 </div>
                 
                 {/* Floating elements behind/around */}
