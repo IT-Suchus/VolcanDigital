@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchClientes, Cliente } from '../lib/api';
 import { Target, TrendingUp, Users, MonitorSmartphone, Heart, MessageCircle, Send, GraduationCap, Layers, UserCheck, Bookmark, MoreHorizontal } from 'lucide-react';
-import metaAdsResultados from '../assets/meta-ads-resultados.png';
+import metaAdsResultados from '../media/BANNER-CEL-PRINICPAL-1-1_IxjJWg2.png';
 import volcanIcon from '../media/volcan-icon.png';
 
 const FadeUp = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
+      {/* 1. Hero Section (Encabezado) */}
       <section className="bg-volcan-night relative overflow-hidden min-h-screen flex flex-col justify-center py-20">
         {/* Íconos decorativos de fondo */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 opacity-[0.04]" aria-hidden="true">
@@ -97,57 +97,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Estructura / Confianza */}
-      <section className="bg-volcan-cream py-20 border-y border-volcan-taupe/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night text-center mb-16 max-w-3xl mx-auto">
-              Una estructura pensada para involucrarnos de verdad.
-            </h2>
-          </FadeUp>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FadeUp delay={0.1}>
-              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">01</span>
-                  <GraduationCap className="text-volcan-ember" size={28} />
+      {/* 2. Video Showcase */}
+      <section className="bg-volcan-night py-24 overflow-hidden border-t border-white/5">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Video a la izquierda */}
+            <FadeUp>
+              <div className="relative flex justify-center lg:justify-start">
+                {/* Glow decorativo */}
+                <div className="absolute inset-0 bg-volcan-ember/15 rounded-full blur-3xl scale-90 pointer-events-none"></div>
+
+                <div className="relative z-10 w-full max-w-[300px] rounded-[2rem] overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/15 bg-black">
+                  <video
+                    src="/videos/resultados-meta-ads.mp4"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="w-full aspect-[9/16] block"
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-volcan-night mb-2">Especialistas certificados</h3>
-                <p className="text-sm text-volcan-taupe leading-relaxed">
-                  Formación en Google Ads, Google Analytics, publicidad digital, SEO y estrategia de contenidos.
-                </p>
               </div>
             </FadeUp>
-            <FadeUp delay={0.2}>
-              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">02</span>
-                  <Layers className="text-volcan-ember" size={28} />
-                </div>
-                <h3 className="text-lg font-bold text-volcan-night mb-2">Estrategias integrales de crecimiento</h3>
-                <p className="text-sm text-volcan-taupe leading-relaxed">
-                  Campañas, creatividad, sitios web, medición y optimización trabajando como un único sistema.
+
+            {/* Texto a la derecha */}
+            <FadeUp delay={0.15}>
+              <div className="space-y-6 text-center lg:text-left">
+                <h2 className="text-3xl md:text-5xl font-serif font-bold text-white">
+                  Así se ven los resultados en acción
+                </h2>
+                <p className="text-lg text-volcan-cream/80 leading-relaxed">
+                  Un vistazo real a cómo optimizamos y escalamos campañas para nuestros clientes.
                 </p>
-              </div>
-            </FadeUp>
-            <FadeUp delay={0.3}>
-              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">03</span>
-                  <UserCheck className="text-volcan-ember" size={28} />
+                <div className="pt-2">
+                  <a
+                    href="https://wa.me/5492216743529"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex text-volcan-ember font-medium hover:text-white transition-colors items-center gap-2"
+                  >
+                    Quiero resultados así →
+                  </a>
                 </div>
-                <h3 className="text-lg font-bold text-volcan-night mb-2">Atención directa del equipo</h3>
-                <p className="text-sm text-volcan-taupe leading-relaxed">
-                  Quienes diseñan la estrategia también analizan los resultados y acompañan cada decisión.
-                </p>
               </div>
             </FadeUp>
           </div>
         </div>
       </section>
 
-      {/* Meta Ads Section */}
-      <section className="bg-volcan-night text-volcan-cream py-24 overflow-hidden">
+      {/* 3. Publicidad en Redes (Meta Ads Section) */}
+      <section className="bg-volcan-night text-volcan-cream py-24 overflow-hidden border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
@@ -178,12 +176,12 @@ export default function Home() {
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <div className="relative flex items-center justify-center py-8">
+              <div className="relative flex items-center justify-center py-6 sm:py-8">
                 {/* Decorative background glow */}
                 <div className="absolute inset-0 bg-volcan-ember/15 rounded-full blur-3xl scale-90"></div>
                 
                 {/* Mock Instagram Ad Card */}
-                <div className="relative w-full max-w-[280px] sm:max-w-[300px] bg-white rounded-3xl shadow-2xl shadow-black/30 overflow-hidden border border-volcan-taupe/20 rotate-2 hover:rotate-0 transition-all duration-500 z-10">
+                <div className="relative w-full max-w-[320px] sm:max-w-[350px] bg-white rounded-3xl shadow-2xl shadow-black/40 overflow-hidden border border-volcan-taupe/20 sm:rotate-2 hover:rotate-0 transition-all duration-500 z-10">
                   {/* Header */}
                   <div className="p-3.5 flex items-center justify-between border-b border-gray-100 bg-white">
                     <div className="flex items-center gap-2.5">
@@ -196,7 +194,9 @@ export default function Home() {
                       <div>
                         <div className="font-semibold text-gray-900 text-xs leading-none mb-0.5 flex items-center gap-1">
                           volcan.digital
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block"></span>
+                          <svg className="w-3.5 h-3.5 text-[#0095F6] inline-block" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.25c.57 0 1.11.23 1.5.64l1.18 1.25a2.25 2.25 0 0 0 1.64.68h1.72c1.24 0 2.25 1.01 2.25 2.25v1.72c0 .6.24 1.17.68 1.64l1.25 1.18c.88.83.88 2.23 0 3.06l-1.25 1.18a2.25 2.25 0 0 0-.68 1.64v1.72c0 1.24-1.01 2.25-2.25 2.25h-1.72a2.25 2.25 0 0 0-1.64.68l-1.18 1.25a2.12 2.12 0 0 1-3.06 0l-1.18-1.25a2.25 2.25 0 0 0-1.64-.68H6.75c-1.24 0-2.25-1.01-2.25-2.25v-1.72a2.25 2.25 0 0 0-.68-1.64l-1.25-1.18a2.12 2.12 0 0 1 0-3.06l1.25-1.18c.44-.47.68-1.04.68-1.64V6.75c0-1.24 1.01-2.25 2.25-2.25h1.72c.6 0 1.17-.24 1.64-.68l1.18-1.25c.39-.41.93-.64 1.5-.64zm4.28 7.22a.75.75 0 0 0-1.06 0L10.5 14.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l2.25 2.25c.29.29.77.29 1.06 0l5.25-5.25a.75.75 0 0 0 0-1.06z" />
+                          </svg>
                         </div>
                         <div className="text-[10px] text-gray-400 font-normal">Publicidad</div>
                       </div>
@@ -204,18 +204,25 @@ export default function Home() {
                     <MoreHorizontal size={18} className="text-gray-500 cursor-pointer" />
                   </div>
                   
-                  {/* Content: resultado real de campaña con relación de aspecto exacta (567x866) */}
-                  <div className="aspect-[567/866] bg-[#fbfcfd] relative overflow-hidden group border-y border-gray-100">
+                  {/* Content: formato retrato 4:5 oficial de Instagram (1080x1350) con máxima nitidez */}
+                  <div className="aspect-[4/5] bg-[#fbfcfd] relative overflow-hidden group border-y border-gray-100">
                      <img
                        src={metaAdsResultados}
                        alt="Resultados reales de una campaña de Meta Ads gestionada por Volcán Digital"
-                       className="w-full h-full object-contain bg-[#fbfcfd] group-hover:scale-[1.02] transition-transform duration-700"
+                       className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 block"
+                       loading="eager"
                      />
+                  </div>
+
+                  {/* Sponsored Ad CTA Bar */}
+                  <div className="bg-[#f8f9fa] border-b border-gray-100 px-3.5 py-2 flex items-center justify-between text-xs font-semibold text-[#0095f6] hover:bg-gray-100 transition-colors cursor-pointer">
+                    <span>Más información</span>
+                    <span>›</span>
                   </div>
                   
                   {/* Action bar */}
                   <div className="p-3.5 bg-white">
-                    <div className="flex items-center justify-between mb-2.5 text-gray-900">
+                    <div className="flex items-center justify-between mb-2 text-gray-900">
                       <div className="flex items-center gap-3.5">
                         <Heart size={22} className="hover:text-red-500 transition-colors cursor-pointer" />
                         <MessageCircle size={22} className="hover:text-volcan-ember transition-colors cursor-pointer" />
@@ -223,8 +230,8 @@ export default function Home() {
                       </div>
                       <Bookmark size={22} className="hover:text-volcan-ember transition-colors cursor-pointer text-gray-700" />
                     </div>
-                    <div className="text-xs font-semibold text-gray-900 mb-1.5">
-                      Resultados reales verificados · Meta Ads
+                    <div className="text-xs font-semibold text-gray-900 mb-1">
+                      Les gusta a 1.420 personas
                     </div>
                     <div className="text-xs leading-snug">
                       <span className="font-semibold text-gray-900 mr-1.5">volcan.digital</span>
@@ -234,12 +241,12 @@ export default function Home() {
                 </div>
                 
                 {/* Floating elements behind/around */}
-                <div className="absolute top-4 -right-2 bg-volcan-clay text-white p-4 rounded-2xl shadow-xl -rotate-12 animate-bounce z-20" style={{ animationDuration: '4s' }}>
-                  <Target size={32} />
+                <div className="absolute top-2 -right-2 sm:top-4 sm:-right-4 bg-volcan-clay text-white p-3.5 sm:p-4 rounded-2xl shadow-xl -rotate-12 animate-bounce z-20" style={{ animationDuration: '4s' }}>
+                  <Target size={28} className="sm:w-8 sm:h-8" />
                 </div>
-                <div className="absolute -bottom-6 left-0 bg-white text-volcan-night p-4 rounded-2xl shadow-xl border border-volcan-taupe/20 rotate-6 z-20">
-                  <div className="font-bold text-2xl mb-1 text-volcan-ember leading-none">+340%</div>
-                  <div className="text-xs text-volcan-taupe font-medium uppercase tracking-wider">Más leads</div>
+                <div className="absolute -bottom-4 -left-2 sm:-bottom-6 sm:-left-4 bg-white text-volcan-night p-3.5 sm:p-4 rounded-2xl shadow-xl border border-volcan-taupe/20 rotate-6 z-20">
+                  <div className="font-bold text-xl sm:text-2xl mb-0.5 sm:mb-1 text-volcan-ember leading-none">+340%</div>
+                  <div className="text-[10px] sm:text-xs text-volcan-taupe font-medium uppercase tracking-wider">Más leads</div>
                 </div>
               </div>
             </FadeUp>
@@ -247,8 +254,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Data Section */}
-      <section className="bg-volcan-cream text-volcan-night py-24">
+      {/* 4. Medimos y usamos datos (Data Section) */}
+      <section className="bg-volcan-cream text-volcan-night py-24 border-t border-volcan-taupe/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night mb-6">Medimos y usamos datos</h2>
@@ -310,66 +317,56 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Video Showcase */}
-      <section className="bg-volcan-night py-24 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Video a la izquierda */}
-            <FadeUp>
-              <div className="relative flex justify-center lg:justify-start">
-                {/* Glow decorativo */}
-                <div className="absolute inset-0 bg-volcan-ember/15 rounded-full blur-3xl scale-90 pointer-events-none"></div>
-
-                <div className="relative z-10 w-full max-w-[300px] rounded-[2rem] overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/15 bg-black">
-                  <video
-                    src="/videos/resultados-meta-ads.mp4"
-                    controls
-                    playsInline
-                    preload="metadata"
-                    className="w-full aspect-[9/16] block"
-                  />
+      {/* 5. Estructura / Confianza */}
+      <section className="bg-volcan-cream py-20 border-t border-volcan-taupe/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeUp>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-volcan-night text-center mb-16 max-w-3xl mx-auto">
+              Una estructura pensada para involucrarnos de verdad.
+            </h2>
+          </FadeUp>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FadeUp delay={0.1}>
+              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">01</span>
+                  <GraduationCap className="text-volcan-ember" size={28} />
                 </div>
+                <h3 className="text-lg font-bold text-volcan-night mb-2">Especialistas certificados</h3>
+                <p className="text-sm text-volcan-taupe leading-relaxed">
+                  Formación en Google Ads, Google Analytics, publicidad digital, SEO y estrategia de contenidos.
+                </p>
               </div>
             </FadeUp>
-
-            {/* Texto a la derecha */}
-            <FadeUp delay={0.15}>
-              <div className="space-y-6 text-center lg:text-left">
-                <h2 className="text-3xl md:text-5xl font-serif font-bold text-white">
-                  Así se ven los resultados en acción
-                </h2>
-                <p className="text-lg text-volcan-cream/80 leading-relaxed">
-                  Un vistazo real a cómo optimizamos y escalamos campañas para nuestros clientes.
-                </p>
-                <div className="pt-2">
-                  <a
-                    href="https://wa.me/5492216743529"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex text-volcan-ember font-medium hover:text-white transition-colors items-center gap-2"
-                  >
-                    Quiero resultados así →
-                  </a>
+            <FadeUp delay={0.2}>
+              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">02</span>
+                  <Layers className="text-volcan-ember" size={28} />
                 </div>
+                <h3 className="text-lg font-bold text-volcan-night mb-2">Estrategias integrales de crecimiento</h3>
+                <p className="text-sm text-volcan-taupe leading-relaxed">
+                  Campañas, creatividad, sitios web, medición y optimización trabajando como un único sistema.
+                </p>
+              </div>
+            </FadeUp>
+            <FadeUp delay={0.3}>
+              <div className="p-6 sm:p-8 h-full flex flex-col bg-white rounded-2xl border border-volcan-taupe/20 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-serif text-3xl font-bold text-volcan-ember/40">03</span>
+                  <UserCheck className="text-volcan-ember" size={28} />
+                </div>
+                <h3 className="text-lg font-bold text-volcan-night mb-2">Atención directa del equipo</h3>
+                <p className="text-sm text-volcan-taupe leading-relaxed">
+                  Quienes diseñan la estrategia también analizan los resultados y acompañan cada decisión.
+                </p>
               </div>
             </FadeUp>
           </div>
         </div>
       </section>
 
-      {/* CTA Strip */}
-      <section className="bg-volcan-clay py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <FadeUp>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">¿Tenés dudas sobre qué necesita tu negocio?</h2>
-            <Link to="/contacto" className="bg-white text-volcan-clay px-8 py-4 rounded-xl font-bold hover:bg-volcan-cream transition-colors text-lg inline-block shadow-xl">
-              Agendar diagnóstico gratuito
-            </Link>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* Clients Section */}
+      {/* 6. Nuestros Clientes (Ellos nos eligen) */}
       <section className="bg-volcan-cream py-24 border-t border-volcan-taupe/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -407,6 +404,18 @@ export default function Home() {
               Ver todos los casos de éxito →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* 7. Dudas / Diagnóstico (CTA Strip) */}
+      <section className="bg-volcan-clay py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FadeUp>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">¿Tenés dudas sobre qué necesita tu negocio?</h2>
+            <Link to="/contacto" className="bg-white text-volcan-clay px-8 py-4 rounded-xl font-bold hover:bg-volcan-cream transition-colors text-lg inline-block shadow-xl">
+              Agendar diagnóstico gratuito
+            </Link>
+          </FadeUp>
         </div>
       </section>
 
