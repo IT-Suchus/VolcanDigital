@@ -10,12 +10,13 @@ import {
   fetchMetricasTecnicasResumen, fetchMetricasTecnicasTiempoRespuesta, fetchMetricasTecnicasRequestsPorEndpoint,
   ResumenMetricas, LeadsPorMes, LeadsPorEstado, LeadsPorPlan,
   MetricasTecnicasResumen, MetricasTecnicasTiempoRespuesta, MetricasTecnicasRequestsPorEndpoint,
-  fetchAdminUsuarios, updateUsuarioEstado, deleteUsuario, Usuario
+  fetchAdminUsuarios, updateUsuarioEstado, deleteUsuario, Usuario,
+  fetchConfiguracion, updateConfiguracion
 } from '../lib/api';
-import { 
+import {
   LogOut, FileText, Briefcase, Plus, Edit, Trash2, CheckCircle2,
   AlertCircle, ExternalLink, RefreshCw, X, Save, Eye, BarChart3, ShieldCheck, ShieldX, UserCog,
-  MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check, ArrowUp, ArrowDown
+  MessageSquare, Mail, Phone, Building, Calendar, Tag, Sparkles, Copy, Check, ArrowUp, ArrowDown, Settings
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -30,11 +31,16 @@ export default function Admin() {
   const [loggedInUser, setLoggedInUser] = useState('');
   const [loggedInRole, setLoggedInRole] = useState('');
   const [loggedInNombre, setLoggedInNombre] = useState('');
-  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas' | 'configuracion'>('leads');
 
   // Usuarios state
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+
+  // Configuración state
+  const [configForm, setConfigForm] = useState({ meta_domain_verification: '' });
+  const [loadingConfig, setLoadingConfig] = useState(false);
+  const [savingConfig, setSavingConfig] = useState(false);
 
   // Leads state
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -84,7 +90,7 @@ export default function Admin() {
     }
   }, [location.pathname]);
 
-  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas') => {
+  const handleTabChange = (tab: 'leads' | 'clientes' | 'planes' | 'usuarios' | 'metricas' | 'configuracion') => {
     setActiveTab(tab);
     if (tab === 'metricas') {
       navigate('/admin/metricas');
@@ -279,6 +285,33 @@ export default function Admin() {
         console.error(err);
         showFeedback('Error al cargar métricas', 'error');
       }).finally(() => setLoadingMetricas(false));
+    } else if (activeTab === 'configuracion') {
+      setLoadingConfig(true);
+      fetchConfiguracion()
+        .then(data => {
+          setConfigForm({ meta_domain_verification: data.meta_domain_verification || '' });
+        })
+        .catch(err => {
+          console.error(err);
+          showFeedback('Error al cargar la configuración', 'error');
+        })
+        .finally(() => setLoadingConfig(false));
+    }
+  };
+
+  const handleSaveConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingConfig(true);
+    try {
+      await updateConfiguracion({
+        meta_domain_verification: configForm.meta_domain_verification.trim() || null
+      });
+      showFeedback('Configuración guardada correctamente');
+    } catch (err) {
+      console.error(err);
+      showFeedback('Error al guardar la configuración', 'error');
+    } finally {
+      setSavingConfig(false);
     }
   };
 
@@ -625,6 +658,21 @@ export default function Admin() {
             </button>
           )}
 
+          {/* Configuración tab — solo admins */}
+          {loggedInRole === 'administrador' && (
+            <button
+              onClick={() => handleTabChange('configuracion')}
+              className={`flex items-center gap-3 px-6 py-3 text-left font-medium transition-all ${
+                activeTab === 'configuracion'
+                  ? 'text-volcan-ember bg-volcan-taupe/25 border-l-4 border-volcan-ember'
+                  : 'text-volcan-cream/70 hover:text-white hover:bg-volcan-taupe/10 border-l-4 border-transparent'
+              }`}
+            >
+              <Settings size={20} />
+              <span>Configuración</span>
+            </button>
+          )}
+
           <div className="mt-auto px-6 py-4 text-xs text-volcan-taupe/40 border-t border-volcan-taupe/20 hidden lg:block space-y-1">
             {loggedInNombre && <div>Nombre: <span className="text-volcan-cream/85 font-semibold">{loggedInNombre}</span></div>}
             <div>Email: <span className="text-volcan-ember font-semibold">{loggedInUser}</span></div>
@@ -650,7 +698,7 @@ export default function Admin() {
           {/* Heading with Refresh */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-volcan-night capitalize flex items-center gap-2">
-              {activeTab}
+              {activeTab === 'configuracion' ? 'Configuración' : activeTab}
             </h1>
             <button 
               onClick={loadData}
@@ -1076,6 +1124,61 @@ export default function Admin() {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* -------------------- TAB: CONFIGURACIÓN -------------------- */}
+          {activeTab === 'configuracion' && (
+            <div className="max-w-2xl">
+              {loadingConfig ? (
+                <div className="py-20 text-center text-volcan-taupe">Cargando configuración...</div>
+              ) : (
+                <form onSubmit={handleSaveConfig} className="bg-white p-6 sm:p-8 rounded-2xl border border-volcan-taupe/20 shadow-sm space-y-5">
+                  <div>
+                    <h3 className="text-lg font-serif font-bold text-volcan-night mb-1">
+                      Verificación de dominio de Meta
+                    </h3>
+                    <p className="text-sm text-volcan-taupe leading-relaxed">
+                      Pegá acá el código que te da Meta Business Suite (Configuración del negocio →
+                      Seguridad de la marca → Dominios) al elegir el método "Verificación por
+                      etiqueta HTML meta". Copiá solo el valor del atributo{' '}
+                      <code className="bg-volcan-cream px-1.5 py-0.5 rounded text-xs">content</code>,
+                      no la etiqueta completa.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-volcan-taupe uppercase mb-1">
+                      Código de verificación
+                    </label>
+                    <input
+                      type="text"
+                      value={configForm.meta_domain_verification}
+                      onChange={(e) => setConfigForm({ meta_domain_verification: e.target.value })}
+                      placeholder="Ej: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+                      className="w-full border border-volcan-taupe/20 bg-white rounded-xl p-3 font-mono text-sm focus:ring-2 focus:ring-volcan-ember focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="bg-amber-50/70 border border-amber-200/60 rounded-xl p-4 text-xs text-amber-950/80 leading-relaxed">
+                    Como el sitio es una SPA (React), esta etiqueta se agrega al <code>&lt;head&gt;</code> con
+                    JavaScript cuando carga la página, no está en el HTML inicial. Si Meta no logra
+                    verificar el dominio por esta vía, usá el método alternativo de registro TXT en el DNS
+                    del dominio — es más confiable para este tipo de sitio.
+                  </div>
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={savingConfig}
+                      className="px-5 py-2.5 btn-gradient-whatsapp text-white rounded-xl text-sm font-bold shadow transition-all flex items-center gap-1.5 disabled:opacity-60"
+                    >
+                      <Save size={16} />
+                      {savingConfig ? 'Guardando...' : 'Guardar'}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           )}
 

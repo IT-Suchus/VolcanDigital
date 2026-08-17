@@ -90,6 +90,16 @@ class PlanResponse(PlanCreate):
     class Config:
         from_attributes = True
 
+# Configuración
+class ConfiguracionUpdate(BaseModel):
+    meta_domain_verification: Optional[str] = Field(None, max_length=255)
+
+class ConfiguracionResponse(BaseModel):
+    meta_domain_verification: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 # Usuarios
 class UsuarioRegister(BaseModel):
     nombre: str = Field(..., min_length=2, max_length=255)

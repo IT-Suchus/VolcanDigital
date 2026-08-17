@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 
 // Layout
 import MainLayout from './components/layout/MainLayout'
+import MetaTagsInjector from './components/common/MetaTagsInjector'
 
 // Pages
 import Home from './pages/Home'
@@ -12,6 +13,10 @@ import Contacto from './pages/Contacto'
 import Admin from './pages/Admin'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import PoliticaPrivacidad from './pages/PoliticaPrivacidad'
+import AvisoLegal from './pages/AvisoLegal'
+import TerminosCondiciones from './pages/TerminosCondiciones'
+import NotFound from './pages/NotFound'
 
 /** Redirige a /login si no hay sesión activa. */
 function RequireAuth({ children }: { children: JSX.Element }) {
@@ -21,7 +26,9 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 
 function App() {
   return (
-    <Routes>
+    <>
+      <MetaTagsInjector />
+      <Routes>
       {/* Public site */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
@@ -29,6 +36,10 @@ function App() {
         <Route path="clientes" element={<Clientes />} />
         <Route path="nosotros" element={<Nosotros />} />
         <Route path="contacto" element={<Contacto />} />
+        <Route path="politica-de-privacidad" element={<PoliticaPrivacidad />} />
+        <Route path="aviso-legal" element={<AvisoLegal />} />
+        <Route path="terminos-y-condiciones" element={<TerminosCondiciones />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       {/* Auth */}
@@ -55,7 +66,8 @@ function App() {
 
       {/* Legacy /admin without leading slash — redirect */}
       <Route path="admin" element={<Navigate to="/admin" replace />} />
-    </Routes>
+      </Routes>
+    </>
   )
 }
 

@@ -263,4 +263,21 @@ export const deleteUsuario = async (usuarioId: number): Promise<void> => {
   await api.delete(`/api/auth/admin/usuarios/${usuarioId}`);
 };
 
+// Configuración del sitio
+export interface Configuracion {
+  meta_domain_verification: string | null;
+}
+
+export const fetchConfiguracion = async (): Promise<Configuracion> => {
+  const { data } = await api.get('/api/configuracion');
+  return data;
+};
+
+export const updateConfiguracion = async (
+  update: Partial<Configuracion>
+): Promise<Configuracion> => {
+  const { data } = await api.put('/api/configuracion', update);
+  return data;
+};
+
 export default api;

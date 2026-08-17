@@ -151,12 +151,19 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-volcan-taupe/20 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-volcan-cream/60 gap-4">
-          <p>&copy; {new Date().getFullYear()} Volcán Digital. Todos los derechos reservados.</p>
-          <p className="flex items-center gap-1 font-medium">
-            Diseñado y desarrollado por{' '}
-            <span className="text-[#D3A784] font-semibold hover:underline cursor-pointer">Suchus IT</span>
-          </p>
+        <div className="border-t border-volcan-taupe/20 pt-8 flex flex-col gap-6">
+          <nav className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 text-xs text-volcan-cream/60">
+            <Link to="/politica-de-privacidad" className="hover:text-volcan-ember transition-colors">Política de Privacidad</Link>
+            <Link to="/aviso-legal" className="hover:text-volcan-ember transition-colors">Aviso Legal</Link>
+            <Link to="/terminos-y-condiciones" className="hover:text-volcan-ember transition-colors">Términos y Condiciones</Link>
+          </nav>
+          <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-volcan-cream/60 gap-4">
+            <p>&copy; {new Date().getFullYear()} Volcán Digital. Todos los derechos reservados.</p>
+            <p className="flex items-center gap-1 font-medium">
+              Diseñado y desarrollado por{' '}
+              <span className="text-[#D3A784] font-semibold hover:underline cursor-pointer">Suchus IT</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
